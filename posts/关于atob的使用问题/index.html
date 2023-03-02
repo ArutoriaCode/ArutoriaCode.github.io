@@ -33,7 +33,7 @@
 
 <html
   class="not-ready text-sm lg:text-base"
-  style="--bg: #faf6f1"
+  style="--bg: #fbfbfb"
   lang="zh-CN"
 >
   <head>
@@ -162,7 +162,7 @@
 
     
     const metaTheme = document.querySelector('meta[name="theme-color"]');
-    const lightBg = `"#faf6f1"`.replace(/"/g, '');
+    const lightBg = `"#fbfbfb"`.replace(/"/g, '');
     const setDark = (isDark) => {
       metaTheme.setAttribute('content', isDark ? '#000' : lightBg);
       htmlClass[isDark ? 'add' : 'remove']('dark');
@@ -196,6 +196,12 @@
     
     
     <nav class="lg:ml-12 lg:flex lg:flex-row lg:items-center lg:space-x-6">
+      
+      <a
+        class="block text-center text-2xl leading-[5rem] lg:text-base lg:font-normal"
+        href="/elysia"
+        >低代码设计器-elysia</a
+      >
       
       <a
         class="block text-center text-2xl leading-[5rem] lg:text-base lg:font-normal"

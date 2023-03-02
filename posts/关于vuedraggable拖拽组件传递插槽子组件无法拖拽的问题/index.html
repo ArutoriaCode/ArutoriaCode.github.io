@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<html
+  class="not-ready text-sm lg:text-base"
+  style="--bg: #fbfbfb"
+  lang="zh-CN"
+>
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, shrink-to-fit=no"
+  />
+
+  
+  <title>关于vuedraggable拖拽组件传递插槽，子组件无法拖拽的问题 - 无限灰</title>
+
+  
+  <meta name="theme-color" />
+  
+  <meta name="description" content="问题的产生 在开发elysia低代码表单设计器时遇到一个难受点： 每次开发一个容器组件时，都要传递一些固定的属性，如list、group、ghostClass、animation、item-key、component-data等属性。
+示例：
+&lt;template&gt; &lt;static-wrapper :widget=&#34;widget&#34;&gt; &lt;a-card :title=&#34;widget.options.title&#34;&gt; &lt;!-- 主要看以下代码 --&gt; &lt;draggable :list=&#34;widget.childrenList&#34; :handle=&#34;handle&#34; :move=&#34;checkMove&#34; :clone=&#34;clone&#34; :group=&#34;group&#34; :ghostClass=&#34;ghostClass&#34; :animation=&#34;animation&#34; :component-data=&#34;{ index: widget.path, type: widget.name }&#34; :item-key=&#34;itemKey&#34; :disabled=&#34;isViewStatus&#34; @end=&#34;onEndMove&#34; &gt; &lt;template #item=&#34;{ element }&#34;&gt; &lt;component :is=&#34;&#39;elysia-&#39; &#43; element.name&#34; :widget=&#34;element&#34; :key=&#34;element.id&#34; &gt;&lt;/component&gt; &lt;/template&gt; &lt;/draggable&gt; &lt;/a-card&gt; &lt;/static-wrapper&gt; &lt;/template&gt; &lt;script setup&gt; defineProps({ widget: { type: Object, required: true } }) &lt;/script&gt; 每次开发一个新的容器组件都得这样写，虽说可以使用vscode的用户代码片段来快速生成，但还是尝试封装了一下组件。
+最开始是这样写的：通过v-for把vuedraggable的所有插槽通过动态插槽分发下去
+&lt;template&gt; &lt;draggable v-bind=&#34;$attrs&#34; :list=&#34;widget.childrenList&#34; :handle=&#34;handle&#34; :move=&#34;checkMove&#34; :clone=&#34;clone&#34; :group=&#34;group&#34; :ghostClass=&#34;ghostClass&#34; :animation=&#34;animation&#34; :component-data=&#34;{ index: widget." />
+  <meta
+    name="author"
+    content=""
+  />
+  
+
+  
+  
+  
+  
+  
+  
+  <link rel="preload stylesheet" as="style" href="https://arutoriacode.github.io/main.min.css" />
+
+  
+  <script
+    defer
+    src="https://arutoriacode.github.io/highlight.min.js"
+    onload="hljs.initHighlightingOnLoad();"
+  ></script>
+  
+
+  
+   
+  <link rel="preload" as="image" href="https://arutoriacode.github.io/theme.png" />
+
+  
+  
+  
+  <link rel="preload" as="image" href="https://avatars.githubusercontent.com/u/37136717" />
+  
+  
+
+  
+  <link rel="preload" as="image" href="https://arutoriacode.github.io/github.svg" />
+  
+
+  
+  <link rel="icon" href="https://arutoriacode.github.io/favicon.ico" />
+  <link rel="apple-touch-icon" href="https://arutoriacode.github.io/apple-touch-icon.png" />
+
+  
+  <meta name="generator" content="Hugo 0.110.0">
+
+  
+  
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <meta property="og:title" content="关于vuedraggable拖拽组件传递插槽，子组件无法拖拽的问题" />
+<meta property="og:description" content="问题的产生 在开发elysia低代码表单设计器时遇到一个难受点： 每次开发一个容器组件时，都要传递一些固定的属性，如list、group、ghostClass、animation、item-key、component-data等属性。
+示例：
+&lt;template&gt; &lt;static-wrapper :widget=&#34;widget&#34;&gt; &lt;a-card :title=&#34;widget.options.title&#34;&gt; &lt;!-- 主要看以下代码 --&gt; &lt;draggable :list=&#34;widget.childrenList&#34; :handle=&#34;handle&#34; :move=&#34;checkMove&#34; :clone=&#34;clone&#34; :group=&#34;group&#34; :ghostClass=&#34;ghostClass&#34; :animation=&#34;animation&#34; :component-data=&#34;{ index: widget.path, type: widget.name }&#34; :item-key=&#34;itemKey&#34; :disabled=&#34;isViewStatus&#34; @end=&#34;onEndMove&#34; &gt; &lt;template #item=&#34;{ element }&#34;&gt; &lt;component :is=&#34;&#39;elysia-&#39; &#43; element.name&#34; :widget=&#34;element&#34; :key=&#34;element.id&#34; &gt;&lt;/component&gt; &lt;/template&gt; &lt;/draggable&gt; &lt;/a-card&gt; &lt;/static-wrapper&gt; &lt;/template&gt; &lt;script setup&gt; defineProps({ widget: { type: Object, required: true } }) &lt;/script&gt; 每次开发一个新的容器组件都得这样写，虽说可以使用vscode的用户代码片段来快速生成，但还是尝试封装了一下组件。
+最开始是这样写的：通过v-for把vuedraggable的所有插槽通过动态插槽分发下去
+&lt;template&gt; &lt;draggable v-bind=&#34;$attrs&#34; :list=&#34;widget.childrenList&#34; :handle=&#34;handle&#34; :move=&#34;checkMove&#34; :clone=&#34;clone&#34; :group=&#34;group&#34; :ghostClass=&#34;ghostClass&#34; :animation=&#34;animation&#34; :component-data=&#34;{ index: widget." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://arutoriacode.github.io/posts/%E5%85%B3%E4%BA%8Evuedraggable%E6%8B%96%E6%8B%BD%E7%BB%84%E4%BB%B6%E4%BC%A0%E9%80%92%E6%8F%92%E6%A7%BD%E5%AD%90%E7%BB%84%E4%BB%B6%E6%97%A0%E6%B3%95%E6%8B%96%E6%8B%BD%E7%9A%84%E9%97%AE%E9%A2%98/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-03-02T09:49:36+08:00" />
+<meta property="article:modified_time" content="2023-03-02T09:49:36+08:00" />
+
+  
+  <meta itemprop="name" content="关于vuedraggable拖拽组件传递插槽，子组件无法拖拽的问题">
+<meta itemprop="description" content="问题的产生 在开发elysia低代码表单设计器时遇到一个难受点： 每次开发一个容器组件时，都要传递一些固定的属性，如list、group、ghostClass、animation、item-key、component-data等属性。
+示例：
+&lt;template&gt; &lt;static-wrapper :widget=&#34;widget&#34;&gt; &lt;a-card :title=&#34;widget.options.title&#34;&gt; &lt;!-- 主要看以下代码 --&gt; &lt;draggable :list=&#34;widget.childrenList&#34; :handle=&#34;handle&#34; :move=&#34;checkMove&#34; :clone=&#34;clone&#34; :group=&#34;group&#34; :ghostClass=&#34;ghostClass&#34; :animation=&#34;animation&#34; :component-data=&#34;{ index: widget.path, type: widget.name }&#34; :item-key=&#34;itemKey&#34; :disabled=&#34;isViewStatus&#34; @end=&#34;onEndMove&#34; &gt; &lt;template #item=&#34;{ element }&#34;&gt; &lt;component :is=&#34;&#39;elysia-&#39; &#43; element.name&#34; :widget=&#34;element&#34; :key=&#34;element.id&#34; &gt;&lt;/component&gt; &lt;/template&gt; &lt;/draggable&gt; &lt;/a-card&gt; &lt;/static-wrapper&gt; &lt;/template&gt; &lt;script setup&gt; defineProps({ widget: { type: Object, required: true } }) &lt;/script&gt; 每次开发一个新的容器组件都得这样写，虽说可以使用vscode的用户代码片段来快速生成，但还是尝试封装了一下组件。
+最开始是这样写的：通过v-for把vuedraggable的所有插槽通过动态插槽分发下去
+&lt;template&gt; &lt;draggable v-bind=&#34;$attrs&#34; :list=&#34;widget.childrenList&#34; :handle=&#34;handle&#34; :move=&#34;checkMove&#34; :clone=&#34;clone&#34; :group=&#34;group&#34; :ghostClass=&#34;ghostClass&#34; :animation=&#34;animation&#34; :component-data=&#34;{ index: widget."><meta itemprop="datePublished" content="2023-03-02T09:49:36+08:00" />
+<meta itemprop="dateModified" content="2023-03-02T09:49:36+08:00" />
+<meta itemprop="wordCount" content="199">
+<meta itemprop="keywords" content="" />
+  
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="关于vuedraggable拖拽组件传递插槽，子组件无法拖拽的问题"/>
+<meta name="twitter:description" content="问题的产生 在开发elysia低代码表单设计器时遇到一个难受点： 每次开发一个容器组件时，都要传递一些固定的属性，如list、group、ghostClass、animation、item-key、component-data等属性。
+示例：
+&lt;template&gt; &lt;static-wrapper :widget=&#34;widget&#34;&gt; &lt;a-card :title=&#34;widget.options.title&#34;&gt; &lt;!-- 主要看以下代码 --&gt; &lt;draggable :list=&#34;widget.childrenList&#34; :handle=&#34;handle&#34; :move=&#34;checkMove&#34; :clone=&#34;clone&#34; :group=&#34;group&#34; :ghostClass=&#34;ghostClass&#34; :animation=&#34;animation&#34; :component-data=&#34;{ index: widget.path, type: widget.name }&#34; :item-key=&#34;itemKey&#34; :disabled=&#34;isViewStatus&#34; @end=&#34;onEndMove&#34; &gt; &lt;template #item=&#34;{ element }&#34;&gt; &lt;component :is=&#34;&#39;elysia-&#39; &#43; element.name&#34; :widget=&#34;element&#34; :key=&#34;element.id&#34; &gt;&lt;/component&gt; &lt;/template&gt; &lt;/draggable&gt; &lt;/a-card&gt; &lt;/static-wrapper&gt; &lt;/template&gt; &lt;script setup&gt; defineProps({ widget: { type: Object, required: true } }) &lt;/script&gt; 每次开发一个新的容器组件都得这样写，虽说可以使用vscode的用户代码片段来快速生成，但还是尝试封装了一下组件。
+最开始是这样写的：通过v-for把vuedraggable的所有插槽通过动态插槽分发下去
+&lt;template&gt; &lt;draggable v-bind=&#34;$attrs&#34; :list=&#34;widget.childrenList&#34; :handle=&#34;handle&#34; :move=&#34;checkMove&#34; :clone=&#34;clone&#34; :group=&#34;group&#34; :ghostClass=&#34;ghostClass&#34; :animation=&#34;animation&#34; :component-data=&#34;{ index: widget."/>
+
+  
+  
+</head>
+
+  <body class="text-black duration-200 ease-out dark:text-white">
+    <header class="mx-auto flex h-[5rem] max-w-3xl px-8 lg:justify-center">
+  <div class="relative z-50 mr-auto flex items-center">
+    <a
+      class="-translate-x-[1px] -translate-y-0.5 text-3xl font-bold"
+      href="https://arutoriacode.github.io/"
+      >无限灰</a
+    >
+    <a
+      class="btn-dark ml-6 h-6 w-6 shrink-0 cursor-pointer [background:url(./theme.png)_left_center/_auto_theme('spacing.6')_no-repeat] [transition:_background-position_0.4s_steps(5)] dark:[background-position:right]"
+    ></a>
+  </div>
+
+  <a
+    class="btn-menu relative z-50 -mr-8 flex h-[5rem] w-[5rem] shrink-0 cursor-pointer flex-col items-center justify-center gap-2.5 lg:hidden"
+  ></a>
+
+  
+  <script>
+    
+    const htmlClass = document.documentElement.classList;
+    setTimeout(() => {
+      htmlClass.remove('not-ready');
+    }, 10);
+
+    
+    const btnMenu = document.querySelector('.btn-menu');
+    btnMenu.addEventListener('click', () => {
+      htmlClass.toggle('open');
+    });
+
+    
+    const metaTheme = document.querySelector('meta[name="theme-color"]');
+    const lightBg = `"#fbfbfb"`.replace(/"/g, '');
+    const setDark = (isDark) => {
+      metaTheme.setAttribute('content', isDark ? '#000' : lightBg);
+      htmlClass[isDark ? 'add' : 'remove']('dark');
+      localStorage.setItem('dark', isDark);
+    };
+
+    
+    const darkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+    if (htmlClass.contains('dark')) {
+      setDark(true);
+    } else {
+      const darkVal = localStorage.getItem('dark');
+      setDark(darkVal ? darkVal === 'true' : darkScheme.matches);
+    }
+
+    
+    darkScheme.addEventListener('change', (event) => {
+      setDark(event.matches);
+    });
+
+    
+    const btnDark = document.querySelector('.btn-dark');
+    btnDark.addEventListener('click', () => {
+      setDark(localStorage.getItem('dark') !== 'true');
+    });
+  </script>
+
+  <div
+    class="nav-wrapper fixed inset-x-0 top-full z-40 flex h-full select-none flex-col justify-center pb-16 duration-200 dark:bg-black lg:static lg:h-auto lg:flex-row lg:!bg-transparent lg:pb-0 lg:transition-none"
+  >
+    
+    
+    <nav class="lg:ml-12 lg:flex lg:flex-row lg:items-center lg:space-x-6">
+      
+      <a
+        class="block text-center text-2xl leading-[5rem] lg:text-base lg:font-normal"
+        href="/elysia"
+        >低代码设计器-elysia</a
+      >
+      
+      <a
+        class="block text-center text-2xl leading-[5rem] lg:text-base lg:font-normal"
+        href="/lowcode-demo"
+        >低代码设计器-Demo</a
+      >
+      
+    </nav>
+    
+
+    
+    <nav
+      class="mt-12 flex justify-center space-x-10 dark:invert lg:mt-0 lg:ml-12 lg:items-center lg:space-x-6"
+    >
+      
+      <a
+        class="h-8 w-8 [background:var(--url)_center_center/cover_no-repeat] lg:h-6 lg:w-6"
+        style="--url: url(./github.svg)"
+        href=" https://github.com/ArutoriaCode "
+        target="_blank"
+      ></a>
+      
+    </nav>
+    
+  </div>
+</header>
+
+
+    <main
+      class="prose prose-neutral relative mx-auto min-h-[calc(100%-10rem)] max-w-3xl px-8 pt-20 pb-32 dark:prose-invert"
+    >
+      
+
+<article>
+  <header class="mb-20">
+    <h1 class="!my-0 pb-2.5">关于vuedraggable拖拽组件传递插槽，子组件无法拖拽的问题</h1>
+
+    
+    <div class="text-sm opacity-60">
+      
+      <time>Mar 2, 2023</time>
+      
+      
+    </div>
+    
+  </header>
+
+  <section><h2 id="问题的产生">问题的产生</h2>
+<p>在开发elysia低代码表单设计器时遇到一个难受点：
+每次开发一个容器组件时，都要传递一些固定的属性，如<strong>list、group、ghostClass、animation、item-key、component-data</strong>等属性。</p>
+<p>示例：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vue" data-lang="vue"><span style="display:flex;"><span>&lt;<span style="color:#f92672">template</span>&gt;
+</span></span><span style="display:flex;"><span>  &lt;<span style="color:#f92672">static-wrapper</span> <span style="color:#f92672">:widget</span><span style="color:#e6db74">=&#34;widget&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">a-card</span> <span style="color:#f92672">:title</span><span style="color:#e6db74">=&#34;widget.options.title&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e">&lt;!--</span> <span style="color:#a6e22e">主要看以下代码</span> <span style="color:#f92672">--&gt;</span>
+</span></span><span style="display:flex;"><span>      &lt;<span style="color:#f92672">draggable</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">:list</span><span style="color:#e6db74">=&#34;widget.childrenList&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">:handle</span><span style="color:#e6db74">=&#34;handle&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">:move</span><span style="color:#e6db74">=&#34;checkMove&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">:clone</span><span style="color:#e6db74">=&#34;clone&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">:group</span><span style="color:#e6db74">=&#34;group&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">:ghostClass</span><span style="color:#e6db74">=&#34;ghostClass&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">:animation</span><span style="color:#e6db74">=&#34;animation&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">:</span><span style="color:#a6e22e">component</span><span style="color:#f92672">-data</span><span style="color:#960050;background-color:#1e0010">=&#34;</span>{ <span style="color:#a6e22e">index</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">widget.path</span><span style="color:#960050;background-color:#1e0010">,</span> <span style="color:#a6e22e">type</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">widget.name</span> }<span style="color:#960050;background-color:#1e0010">&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">:item-key</span><span style="color:#e6db74">=&#34;itemKey&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">:disabled</span><span style="color:#e6db74">=&#34;isViewStatus&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">@end</span><span style="color:#e6db74">=&#34;onEndMove&#34;</span>
+</span></span><span style="display:flex;"><span>      &gt;
+</span></span><span style="display:flex;"><span>        &lt;<span style="color:#f92672">template</span> <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#a6e22e">item</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;{ element }&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>          &lt;<span style="color:#f92672">component</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">:</span><span style="color:#a6e22e">is</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;&#39;elysia-&#39; + element.name&#34;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">:widget</span><span style="color:#e6db74">=&#34;element&#34;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">:key</span><span style="color:#e6db74">=&#34;element.id&#34;</span>
+</span></span><span style="display:flex;"><span>          &gt;&lt;/<span style="color:#f92672">component</span>&gt;
+</span></span><span style="display:flex;"><span>        &lt;/<span style="color:#f92672">template</span>&gt;
+</span></span><span style="display:flex;"><span>      &lt;/<span style="color:#f92672">draggable</span>&gt;
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/a-card&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/static-wrapper&gt;</span>
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#f92672">template</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;<span style="color:#f92672">script</span> <span style="color:#a6e22e">setup</span>&gt;
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">defineProps</span>({
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">widget</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">type</span><span style="color:#f92672">:</span> Object,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">required</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>})
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#f92672">script</span>&gt;
+</span></span></code></pre></div><p>每次开发一个新的容器组件都得这样写，虽说可以使用vscode的<strong>用户代码片段</strong>来快速生成，但还是尝试封装了一下组件。</p>
+<p>最开始是这样写的：通过<strong>v-for</strong>把<strong>vuedraggable</strong>的所有插槽通过动态插槽分发下去</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vue" data-lang="vue"><span style="display:flex;"><span>&lt;<span style="color:#f92672">template</span>&gt;
+</span></span><span style="display:flex;"><span>  &lt;<span style="color:#f92672">draggable</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">v-bind</span><span style="color:#e6db74">=&#34;$attrs&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    :list=&#34;widget.childrenList&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    :handle=&#34;handle&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    :move=&#34;checkMove&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    :clone=&#34;clone&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    :group=&#34;group&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    :ghostClass=&#34;ghostClass&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    :animation=&#34;animation&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    :component-data=&#34;{ index: widget.path, type: widget.name }&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    :item-key=&#34;itemKey&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    :disabled=&#34;isViewStatus&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    @end=&#34;onEndMove&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  &gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    &lt;!-- 循环插槽并分发下去 --&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    &lt;template v-for=&#34;slotKey in Object.keys($slots)&#34; v-slot:[slotKey]=&#34;scope&#34;&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      &lt;slot v-bind=&#34;scope&#34;</span>&gt;&lt;/<span style="color:#f92672">slot</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;/<span style="color:#f92672">template</span>&gt;
+</span></span><span style="display:flex;"><span>  &lt;/<span style="color:#f92672">draggable</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#f92672">template</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;<span style="color:#f92672">script</span> <span style="color:#a6e22e">setup</span>&gt;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> <span style="color:#a6e22e">draggable</span> <span style="color:#a6e22e">from</span> <span style="color:#e6db74">&#39;vuedraggable&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 省略一些导入的模块
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 除了`widget`必须传递，其他可选均有默认值
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">props</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">defineProps</span>({
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">group</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">type</span><span style="color:#f92672">:</span> [String, Object],
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">default</span><span style="color:#f92672">:</span> () =&gt; ({
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;dragGroup&#39;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">pull</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">put</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>    })
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">ghostClass</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">type</span><span style="color:#f92672">:</span> String,
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">default</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;ghost&#39;</span>
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">animation</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">type</span><span style="color:#f92672">:</span> Number,
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">default</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">300</span>
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">widget</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">type</span><span style="color:#f92672">:</span> Object,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">required</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">itemKey</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">type</span><span style="color:#f92672">:</span> String,
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">default</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;id&#39;</span>
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// 可以进行拖拽操作的区域
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#a6e22e">handle</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">type</span><span style="color:#f92672">:</span> String,
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">default</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;.move-area&#39;</span>
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>})
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">onEndMove</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">evt</span> =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// 省略
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#f92672">script</span>&gt;
+</span></span></code></pre></div><p>本以为就这样结束了，运行也能把组件拖拽进去，但却发现无法拖拽出来，这就尴尬了。</p>
+<p><img src="/img/20230302_101117.gif" alt=""></p>
+<h2 id="问题的溯源">问题的溯源</h2>
+<p>在寻找问题的根源时，发现了实际拖拽的是其父组件</p>
+<p><img src="/img/20230302_104018.gif" alt=""></p>
+<p>这时候我在想是不是事件冒泡的原因，也给各种事件加上了**.stop**防止，但还是没有效果。</p>
+<p>就这样又去看了<strong>vuedraggable</strong>的源码，又在浏览器进行<strong>debugger</strong>断点调试，发现咋整实际拖拽都是父组件（也就是途中的<strong>卡片</strong>组件）</p>
+<p>在换回<strong>vuedraggable</strong>直接使用也没问题啊，可以正常拖拽进去、出来，就这样又怀疑到是不是动态插槽分发导致的：</p>
+<p>就这样我尝试使用了具名插槽，反正其他<strong>header</strong>和<strong>footer</strong>插槽用不上</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vue" data-lang="vue"><span style="display:flex;"><span>&lt;<span style="color:#f92672">template</span> <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#a6e22e">item</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;scope&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>  &lt;<span style="color:#f92672">slot</span> <span style="color:#f92672">v-bind</span><span style="color:#e6db74">=&#34;scope&#34;</span>&gt;&lt;/<span style="color:#f92672">slot</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#f92672">template</span>&gt;
+</span></span></code></pre></div><p>但可惜并没有效果，有了打消使用封装组件的念头。</p>
+<h2 id="问题的解决">问题的解决</h2>
+<p>本着已经怀疑到插槽身上，就尝试打了个断点。</p>
+<p><img src="/img/1677725946346.png" alt=""></p>
+<p>然后就发现<strong>node.props.key</strong>有点不太对劲，这是把插槽默认插槽**<!-- raw HTML omitted --><strong>当做拖拽对象了，也可以看到</strong>node.ctx**指向的就是卡片组件，这就是问题所在了。</p>
+<p>![node.ctx.props]</p>
+<p>既然发现了问题该咋解决呢？</p>
+<p>在插槽外面加个<strong>div</strong>就行了，这样他的指向就没问题了，也可以从卡片正常拖拽出去了</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vue" data-lang="vue"><span style="display:flex;"><span>&lt;<span style="color:#f92672">template</span> <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#a6e22e">item</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;scope&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>  &lt;<span style="color:#f92672">div</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">slot</span> <span style="color:#f92672">v-bind</span><span style="color:#e6db74">=&#34;scope&#34;</span>&gt;&lt;/<span style="color:#f92672">slot</span>&gt;
+</span></span><span style="display:flex;"><span>  &lt;/<span style="color:#f92672">div</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#f92672">template</span>&gt;
+</span></span></code></pre></div><p><strong>debugger</strong>调试，可以看到<strong>node.props</strong>不再单单是一个插槽的key了</p>
+<p><img src="/img/1677729032344.png" alt=""></p>
+</section>
+
+  
+  
+
+  
+  
+  
+  <nav class="mt-24 flex rounded-lg bg-black/[3%] text-lg dark:bg-white/[8%]">
+    
+    
+    <a
+      class="ml-auto flex w-1/2 items-center justify-end rounded-r-md p-6 pl-3 no-underline hover:bg-black/[2%]"
+      href="https://arutoriacode.github.io/posts/vite%E5%8A%A8%E6%80%81%E5%AF%BC%E5%85%A5svg%E7%94%A8%E4%BD%9Cvue%E5%9B%BE%E6%A0%87/"
+      ><span>Vite动态导入svg用作vue图标</span><span class="ml-1.5">→</span></a
+    >
+    
+  </nav>
+  
+
+  
+  
+
+  
+  
+</article>
+
+
+    </main>
+
+    <footer
+  class="opaco mx-auto flex h-[5rem] max-w-3xl items-center px-8 text-[0.9em] opacity-60"
+>
+  <div class="mr-auto">
+    &copy; 2023
+    <a class="link" href="https://arutoriacode.github.io/">无限灰</a>
+  </div>
+  <a class="link mx-6" href="https://gohugo.io/" rel="noopener" target="_blank"
+    >Powered by Hugo️️</a
+  >️
+  <a
+    class="link"
+    href="https://github.com/nanxiaobei/hugo-paper"
+    rel="noopener"
+    target="_blank"
+    >▷ Paper 6</a
+  >
+</footer>
+
+  </body>
+</html>
