@@ -130,7 +130,7 @@
 最开始是这样写的：通过v-for把vuedraggable的所有插槽通过动态插槽分发下去
 &lt;template&gt; &lt;draggable v-bind=&#34;$attrs&#34; :list=&#34;widget.childrenList&#34; :handle=&#34;handle&#34; :move=&#34;checkMove&#34; :clone=&#34;clone&#34; :group=&#34;group&#34; :ghostClass=&#34;ghostClass&#34; :animation=&#34;animation&#34; :component-data=&#34;{ index: widget."><meta itemprop="datePublished" content="2023-03-02T09:49:36+08:00" />
 <meta itemprop="dateModified" content="2023-03-02T09:49:36+08:00" />
-<meta itemprop="wordCount" content="199">
+<meta itemprop="wordCount" content="202">
 <meta itemprop="keywords" content="" />
   
   <meta name="twitter:card" content="summary"/>
@@ -374,7 +374,7 @@
 <h2 id="问题的溯源">问题的溯源</h2>
 <p>在寻找问题的根源时，发现了实际拖拽的是其父组件</p>
 <p><img src="/img/20230302_104018.gif" alt=""></p>
-<p>这时候我在想是不是事件冒泡的原因，也给各种事件加上了**.stop**防止，但还是没有效果。</p>
+<p>这时候我在想是不是事件冒泡的原因，也给各种事件加上了<strong>eventName.stop</strong>防止，但还是没有效果。</p>
 <p>就这样又去看了<strong>vuedraggable</strong>的源码，又在浏览器进行<strong>debugger</strong>断点调试，发现咋整实际拖拽都是父组件（也就是途中的<strong>卡片</strong>组件）</p>
 <p>在换回<strong>vuedraggable</strong>直接使用也没问题啊，可以正常拖拽进去、出来，就这样又怀疑到是不是动态插槽分发导致的：</p>
 <p>就这样我尝试使用了具名插槽，反正其他<strong>header</strong>和<strong>footer</strong>插槽用不上</p>
@@ -385,9 +385,7 @@
 <h2 id="问题的解决">问题的解决</h2>
 <p>本着已经怀疑到插槽身上，就尝试打了个断点。</p>
 <p><img src="/img/1677725946346.png" alt=""></p>
-<p>然后就发现<strong>node.props.key</strong>有点不太对劲，这是把插槽默认插槽**<!-- raw HTML omitted --><strong>当做拖拽对象了，也可以看到</strong>node.ctx**指向的就是卡片组件，这就是问题所在了。</p>
-<p>![node.ctx.props]</p>
-<p>既然发现了问题该咋解决呢？</p>
+<p>然后就发现 <strong>node.props.key</strong> 有点不太对劲，这是把插槽默认插槽 <strong><!-- raw HTML omitted --></strong> 当做拖拽对象了，也可以看到 <strong>node.ctx</strong> 指向的就是卡片组件，这就是问题所在了，那么该咋解决呢？</p>
 <p>在插槽外面加个<strong>div</strong>就行了，这样他的指向就没问题了，也可以从卡片正常拖拽出去了</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vue" data-lang="vue"><span style="display:flex;"><span>&lt;<span style="color:#f92672">template</span> <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#a6e22e">item</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;scope&#34;</span>&gt;
 </span></span><span style="display:flex;"><span>  &lt;<span style="color:#f92672">div</span>&gt;
