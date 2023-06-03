@@ -6,7 +6,27 @@
     <description>Recent content on 无限灰</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Thu, 02 Mar 2023 09:49:36 +0800</lastBuildDate><atom:link href="https://arutoriacode.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 03 Jun 2023 09:07:44 +0800</lastBuildDate><atom:link href="https://arutoriacode.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>React Native快速刷新（FastRefresh）无法工作</title>
+      <link>https://arutoriacode.github.io/posts/react-native%E5%BF%AB%E9%80%9F%E5%88%B7%E6%96%B0fastrefresh%E6%97%A0%E6%B3%95%E5%B7%A5%E4%BD%9C/</link>
+      <pubDate>Sat, 03 Jun 2023 09:07:44 +0800</pubDate>
+      
+      <guid>https://arutoriacode.github.io/posts/react-native%E5%BF%AB%E9%80%9F%E5%88%B7%E6%96%B0fastrefresh%E6%97%A0%E6%B3%95%E5%B7%A5%E4%BD%9C/</guid>
+      <description>在使用React Native开发过程中，可能会遇到一些奇怪的问题，比如快速刷新无法工作或者Axios可以发送请求但是无法进入回调函数。今天我来分享一下我遇到这些问题的解决方法。
+问题1：快速刷新无法工作
+首先，我们需要确认开发菜单是否开启了快速刷新功能。如果没有开启，可以通过以下步骤打开：
+在模拟器或者真机上双击R键。 在开发菜单中选择“Enable Fast Refresh”。 如果开启了快速刷新功能但是仍然无法工作，那么可能是以下原因导致的：
+Babel的配置问题。如果你安装了mobx并按照官网的要求配置了Babel，但是忽略了Babel的版本，就可能会导致快速刷新无法工作。Babel大于7.13.0的正确配置应该是： { &amp;#34;plugins&amp;#34;: [[&amp;#34;@babel/plugin-proposal-class-properties&amp;#34;]], &amp;#34;assumptions&amp;#34;: { &amp;#34;setPublicClassFields&amp;#34;: false } } 如果你是小于7.13.0，那么应该如下配置：
+{ &amp;#34;plugins&amp;#34;: [[&amp;#34;@babel/plugin-proposal-class-properties&amp;#34;, { &amp;#34;loose&amp;#34;: false }]], } package.json中的resolutions配置项。如果你在package.json中添加了resolutions配置项，可能会导致快速刷新无法工作。可以尝试删除该配置项并重新安装依赖。 问题2：Axios可以发送请求但是无法进入回调函数
+如果你遇到这个问题，可以先检查一下Axios的使用方法是否正确。正确的使用方法应该是这样的：
+axios.get(&amp;#39;/api/user&amp;#39;) .then(function (response) { console.log(response); }) .catch(function (error) { console.log(error); }); 如果使用方法没有问题，那么可能是以下原因导致的：
+Babel的配置问题。和快速刷新无法工作的问题一样，Babel的配置也可能会导致Axios无法进入回调函数。请确保你的Babel配置正确。
+tsconfig.json中的compilerOptions选项。如果你在tsconfig.json中添加了compilerOptions选项，并且覆盖了@tsconfig/react-native/tsconfig.json中的正确配置项，就可能会导致Axios无法进入回调函数。正确的compilerOptions应该是这样的：
+{ &amp;#34;extends&amp;#34;: &amp;#34;@tsconfig/react-native/tsconfig.json&amp;#34;, &amp;#34;compilerOptions&amp;#34;: { &amp;#34;experimentalDecorators&amp;#34;: true } } 总结
+在React Native开发过程中遇到问题是很正常的，但是只要认真排查，就一定能够找到解决方法。实在不行就使用排除法，先把依赖还原至简，逐个排查，总有收获！</description>
+    </item>
+    
     <item>
       <title>关于vuedraggable拖拽组件传递插槽，子组件无法拖拽的问题</title>
       <link>https://arutoriacode.github.io/posts/%E5%85%B3%E4%BA%8Evuedraggable%E6%8B%96%E6%8B%BD%E7%BB%84%E4%BB%B6%E4%BC%A0%E9%80%92%E6%8F%92%E6%A7%BD%E5%AD%90%E7%BB%84%E4%BB%B6%E6%97%A0%E6%B3%95%E6%8B%96%E6%8B%BD%E7%9A%84%E9%97%AE%E9%A2%98/</link>
@@ -15,9 +35,7 @@
       <guid>https://arutoriacode.github.io/posts/%E5%85%B3%E4%BA%8Evuedraggable%E6%8B%96%E6%8B%BD%E7%BB%84%E4%BB%B6%E4%BC%A0%E9%80%92%E6%8F%92%E6%A7%BD%E5%AD%90%E7%BB%84%E4%BB%B6%E6%97%A0%E6%B3%95%E6%8B%96%E6%8B%BD%E7%9A%84%E9%97%AE%E9%A2%98/</guid>
       <description>问题的产生 在开发elysia低代码表单设计器时遇到一个难受点： 每次开发一个容器组件时，都要传递一些固定的属性，如list、group、ghostClass、animation、item-key、component-data等属性。
 示例：
-&amp;lt;template&amp;gt; &amp;lt;static-wrapper :widget=&amp;#34;widget&amp;#34;&amp;gt; &amp;lt;a-card :title=&amp;#34;widget.options.title&amp;#34;&amp;gt; &amp;lt;!-- 主要看以下代码 --&amp;gt; &amp;lt;draggable :list=&amp;#34;widget.childrenList&amp;#34; :handle=&amp;#34;handle&amp;#34; :move=&amp;#34;checkMove&amp;#34; :clone=&amp;#34;clone&amp;#34; :group=&amp;#34;group&amp;#34; :ghostClass=&amp;#34;ghostClass&amp;#34; :animation=&amp;#34;animation&amp;#34; :component-data=&amp;#34;{ index: widget.path, type: widget.name }&amp;#34; :item-key=&amp;#34;itemKey&amp;#34; :disabled=&amp;#34;isViewStatus&amp;#34; @end=&amp;#34;onEndMove&amp;#34; &amp;gt; &amp;lt;template #item=&amp;#34;{ element }&amp;#34;&amp;gt; &amp;lt;component :is=&amp;#34;&amp;#39;elysia-&amp;#39; + element.name&amp;#34; :widget=&amp;#34;element&amp;#34; :key=&amp;#34;element.id&amp;#34; &amp;gt;&amp;lt;/component&amp;gt; &amp;lt;/template&amp;gt; &amp;lt;/draggable&amp;gt; &amp;lt;/a-card&amp;gt; &amp;lt;/static-wrapper&amp;gt; &amp;lt;/template&amp;gt; &amp;lt;script setup&amp;gt; defineProps({ widget: { type: Object, required: true } }) &amp;lt;/script&amp;gt; 每次开发一个新的容器组件都得这样写，虽说可以使用vscode的用户代码片段来快速生成，但还是尝试封装了一下组件。
-最开始是这样写的：通过v-for把vuedraggable的所有插槽通过动态插槽分发下去
-&amp;lt;template&amp;gt; &amp;lt;draggable v-bind=&amp;#34;$attrs&amp;#34; :list=&amp;#34;widget.childrenList&amp;#34; :handle=&amp;#34;handle&amp;#34; :move=&amp;#34;checkMove&amp;#34; :clone=&amp;#34;clone&amp;#34; :group=&amp;#34;group&amp;#34; :ghostClass=&amp;#34;ghostClass&amp;#34; :animation=&amp;#34;animation&amp;#34; :component-data=&amp;#34;{ index: widget.</description>
+&amp;lt;template&amp;gt; &amp;lt;static-wrapper :widget=&amp;#34;widget&amp;#34;&amp;gt; &amp;lt;a-card :title=&amp;#34;widget.options.title&amp;#34;&amp;gt; &amp;lt;!-- 主要看以下代码 --&amp;gt; &amp;lt;draggable :list=&amp;#34;widget.childrenList&amp;#34; handle=&amp;#34;.move-area&amp;#34; :move=&amp;#34;checkMove&amp;#34; :clone=&amp;#34;clone&amp;#34; group=&amp;#34;dragGroup&amp;#34; ghostClass=&amp;#34;ghost&amp;#34; :animation=&amp;#34;300&amp;#34; :component-data=&amp;#34;{ index: widget.path, type: widget.name }&amp;#34; item-key=&amp;#34;id&amp;#34; :disabled=&amp;#34;isViewStatus&amp;#34; @end=&amp;#34;onEndMove&amp;#34; &amp;gt; &amp;lt;template #item=&amp;#34;{ element }&amp;#34;&amp;gt; &amp;lt;component :is=&amp;#34;&amp;#39;elysia-&amp;#39; + element.name&amp;#34; :widget=&amp;#34;element&amp;#34; :key=&amp;#34;element.id&amp;#34; &amp;gt;&amp;lt;/component&amp;gt; &amp;lt;/template&amp;gt; &amp;lt;/draggable&amp;gt; &amp;lt;/a-card&amp;gt; &amp;lt;/static-wrapper&amp;gt; &amp;lt;/template&amp;gt; &amp;lt;script setup&amp;gt; // 省略一些模块导入 defineProps({ widget: { type: Object, required: true } }) const onEndMove = () =&amp;gt; { // 省略 } &amp;lt;/script&amp;gt; 每次开发一个新的容器组件都得这样写，虽说可以使用vscode的用户代码片段来快速生成，但还是尝试封装了一下组件。</description>
     </item>
     
     <item>
