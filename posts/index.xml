@@ -6,7 +6,30 @@
     <description>Recent content in Posts on 无限灰</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Sat, 03 Jun 2023 09:07:44 +0800</lastBuildDate><atom:link href="https://arutoriacode.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 05 Jul 2023 22:32:46 +0800</lastBuildDate><atom:link href="https://arutoriacode.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>低代码表单设计器设计思路（一）</title>
+      <link>https://arutoriacode.github.io/posts/%E4%BD%8E%E4%BB%A3%E7%A0%81%E8%A1%A8%E5%8D%95%E8%AE%BE%E8%AE%A1%E5%99%A8%E8%AE%BE%E8%AE%A1%E6%80%9D%E8%B7%AF%E4%B8%80/</link>
+      <pubDate>Wed, 05 Jul 2023 22:32:46 +0800</pubDate>
+      
+      <guid>https://arutoriacode.github.io/posts/%E4%BD%8E%E4%BB%A3%E7%A0%81%E8%A1%A8%E5%8D%95%E8%AE%BE%E8%AE%A1%E5%99%A8%E8%AE%BE%E8%AE%A1%E6%80%9D%E8%B7%AF%E4%B8%80/</guid>
+      <description>最近我写了一个低代码表单设计器，已经有一段时间了，现在想总结一下这个过程。
+需求原型 接下来将按照原型草稿逐步实现并填充细节上去
+拖拽功能 拖拽有一个现成的库让我们可以快速实现功能：Sortable.js
+这还有一个基于它写的vue版本：vuedraggable
+使用vuedraggable大大方便我们开发实现由左侧面板组件栏拖拽到可视化编辑区域的功能
+vuedraggable的基础用法可以查看 Github，这里就不过多赘述了。
+从一个可拖拽列表拖拽到另一个可拖拽列表这种没什么大问题，参照官方给出的示例就可以轻松实现，主要是要计算拖拽后组件的位置，拖拽后的组件需要记录它自身在哪个位置、哪个容器组件下，这事关乎一些功能的实现，比如复制组件的功能。
+当一个字段组件在某个父容器组件内，而这个父容器组件可能也在某个容器组件内，在点击字段组件的复制按钮时，如果不知道字段组件所处的位置信息，那么复制后的组件就只能在最顶层显示出来，如图：
+其实用复制功能来举例子并不恰当，因为我们可以规定点击复制就复制到顶层，用户复制完毕后自己再拖拽到原来的容器位置也是可以的。
+那么就用组件的上移、下移以及删除功能来说：
+当点击删除时，如果不能清除组件所在的位置信息，那么我们需要在多层级的对象结构中递归循环找到这个组件JSON对象的数据，在可能有数据量大多层嵌套的情况下，这种查找操作是很消耗性能的。
+同样在上移、下移时，上移的上方组件我们要拿到和当前的组件进行对换，这也是一种递归查找。
+如何解决这种性能问题？ 既然需要知道位置信息，那么在渲染对象结构数据时带下去就可以了。
+&amp;lt;template&amp;gt; &amp;lt;draggable v-bind=&amp;#34;$attrs&amp;#34; :list=&amp;#34;widget.childrenList&amp;#34; :handle=&amp;#34;handle&amp;#34; :move=&amp;#34;checkMove&amp;#34; :clone=&amp;#34;clone&amp;#34; :group=&amp;#34;group&amp;#34; :ghostClass=&amp;#34;ghostClass&amp;#34; :animation=&amp;#34;animation&amp;#34; :component-data=&amp;#34;{ name: widget.nameAlias || widget.name }&amp;#34; :item-key=&amp;#34;itemKey&amp;#34; :disabled=&amp;#34;isViewStatus&amp;#34; @end=&amp;#34;onEndMove&amp;#34; &amp;gt; &amp;lt;template #item=&amp;#34;scope&amp;#34;&amp;gt; &amp;lt;div :id=&amp;#34;scope.element.id&amp;#34;&amp;gt; &amp;lt;!-- 在这里我们就将父组件位置信息列表的和当前组件的索引组合传递下去 --&amp;gt; &amp;lt;!-- 比如这样 [0,0,2,3,1] --&amp;gt; &amp;lt;slot v-bind=&amp;#34;{ element: { ...scope.element, path: [...widget.path, scope.index] }, index: scope.index }&amp;#34; &amp;gt;&amp;lt;/slot&amp;gt; &amp;lt;/div&amp;gt; &amp;lt;/template&amp;gt; &amp;lt;/draggable&amp;gt; &amp;lt;/template&amp;gt; 最终整个 渲染数据结构 是这样的：
+{ id: &amp;#39;2ee7bfed-f7df-45b2-9664-a5fc6acfc15e&amp;#39;, name: &amp;#34;a-form&amp;#34;, childrenList: [ { id: &amp;#39;33213ac6-cb05-4b7c-8e4b-fd47aff23a4d&amp;#39;, name: &amp;#39;a-card&amp;#39;, childrenList: [ { id: &amp;#39;ec8ba4dc-9b3e-4f9c-bd29-ef5597a3f631&amp;#39;, name: &amp;#39;text&amp;#39;, // 这里是拼接父组件的位置信息和当前组件的位置信息 path: [&amp;#39;root&amp;#39;, 0, 0], type: &amp;#39;field&amp;#39;, options: { .</description>
+    </item>
+    
     <item>
       <title>React Native快速刷新（FastRefresh）无法工作</title>
       <link>https://arutoriacode.github.io/posts/react-native%E5%BF%AB%E9%80%9F%E5%88%B7%E6%96%B0fastrefresh%E6%97%A0%E6%B3%95%E5%B7%A5%E4%BD%9C/</link>
