@@ -6,7 +6,27 @@
     <description>Recent content in Posts on 无限灰</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Wed, 05 Jul 2023 22:32:46 +0800</lastBuildDate><atom:link href="https://arutoriacode.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 06 Jul 2023 19:31:46 +0800</lastBuildDate><atom:link href="https://arutoriacode.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title> uni-app 调试问题记录</title>
+      <link>https://arutoriacode.github.io/posts/uni-app-%E8%B0%83%E8%AF%95%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95/</link>
+      <pubDate>Thu, 06 Jul 2023 19:31:46 +0800</pubDate>
+      
+      <guid>https://arutoriacode.github.io/posts/uni-app-%E8%B0%83%E8%AF%95%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95/</guid>
+      <description>主要记录学习uni-app跨端遇到的问题和解决方案
+问题：样式未能覆盖（跨端） 在微信小程序端可能与H5、APP的样式不一致，样式并没有被覆盖
+解决方案：
+方案一：如果样式是调整上下外边距的可以使用 进行包裹，然后定义该 的样式即可
+方案二：使用 ::v-deep 进行穿透，微信小程序还需要设置 options.styleIsolation 选项：
+&amp;lt;template&amp;gt; &amp;lt;view class=&amp;#34;container&amp;#34;&amp;gt; &amp;lt;custom-componet&amp;gt;&amp;lt;/custom-componet&amp;gt; &amp;lt;/view&amp;gt; &amp;lt;/template&amp;gt; &amp;lt;script&amp;gt; export default { options: { styleIsolation: &amp;#39;shared&amp;#39; // 微信小程序端一定要配置该项 } } &amp;lt;/script&amp;gt; &amp;lt;style&amp;gt; /** 微信小程序还要求::v-deep前面必须还要有父元素的类名存在 **/ .container ::v-deep .custom-component-class-name { /* 覆盖 custom-component 的样式 */ } &amp;lt;/style&amp;gt; 问题：小程序主包太大无法预览和发布、真机调试 微信小程序预览和发布的主包大小是有限制的，最大 4MB ，超过后是无法真机调试的查看效果的
+解决方案：
+将 HBuilderX 一 运行 一 运行到小程序模拟器 一 运行时是否压缩代码 勾选上，如果依旧超过限制无法真机调试，请注意静态文件是否有过大的文件，哪怕你在代码中不导入使用也会算进主包大小内，将不用的静态文件从打包运行时的目录（如：unpackage\dist\dev\mp-weixin）中删除即可；
+正确的调试方法应该将一些图片资源转为线上，比如上传至图床或让后端返回URL链接。
+问题：手机真机调试APP端，误操作未对USB设备授权，导致无法真机运行 解决方案：
+USB重插手机，如还未弹出提示，先尝试从电脑中拔出，然后使用充电头充会电再重插，如还未提示可尝试重启电脑。
+问题：自定义导航栏多端适配的问题 &amp;lt;template&amp;gt; &amp;lt;view class=&amp;#34;page-index-nav-bar flex-row justify-between&amp;#34; :style=&amp;#34;navigatorBarStyle&amp;#34; &amp;gt; &amp;lt;view class=&amp;#34;flex-row align-center search-container&amp;#34; :style=&amp;#34;&amp;#39;height: &amp;#39; + navHeight + &amp;#39;px&amp;#39;&amp;#34; &amp;gt; &amp;lt;image class=&amp;#34;youping-icon&amp;#34; src=&amp;#34;.</description>
+    </item>
+    
     <item>
       <title>低代码表单设计器设计思路（一）</title>
       <link>https://arutoriacode.github.io/posts/%E4%BD%8E%E4%BB%A3%E7%A0%81%E8%A1%A8%E5%8D%95%E8%AE%BE%E8%AE%A1%E5%99%A8%E8%AE%BE%E8%AE%A1%E6%80%9D%E8%B7%AF%E4%B8%80/</link>

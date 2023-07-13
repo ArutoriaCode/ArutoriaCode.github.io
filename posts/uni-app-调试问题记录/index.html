@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<html
+  class="not-ready text-sm lg:text-base"
+  style="--bg: #fbfbfb"
+  lang="zh-CN"
+>
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, shrink-to-fit=no"
+  />
+
+  
+  <title> uni-app 调试问题记录 - 无限灰</title>
+
+  
+  <meta name="theme-color" />
+  
+  <meta name="description" content="主要记录学习uni-app跨端遇到的问题和解决方案
+问题：样式未能覆盖（跨端） 在微信小程序端可能与H5、APP的样式不一致，样式并没有被覆盖
+解决方案：
+方案一：如果样式是调整上下外边距的可以使用 进行包裹，然后定义该 的样式即可
+方案二：使用 ::v-deep 进行穿透，微信小程序还需要设置 options.styleIsolation 选项：
+&lt;template&gt; &lt;view class=&#34;container&#34;&gt; &lt;custom-componet&gt;&lt;/custom-componet&gt; &lt;/view&gt; &lt;/template&gt; &lt;script&gt; export default { options: { styleIsolation: &#39;shared&#39; // 微信小程序端一定要配置该项 } } &lt;/script&gt; &lt;style&gt; /** 微信小程序还要求::v-deep前面必须还要有父元素的类名存在 **/ .container ::v-deep .custom-component-class-name { /* 覆盖 custom-component 的样式 */ } &lt;/style&gt; 问题：小程序主包太大无法预览和发布、真机调试 微信小程序预览和发布的主包大小是有限制的，最大 4MB ，超过后是无法真机调试的查看效果的
+解决方案：
+将 HBuilderX 一 运行 一 运行到小程序模拟器 一 运行时是否压缩代码 勾选上，如果依旧超过限制无法真机调试，请注意静态文件是否有过大的文件，哪怕你在代码中不导入使用也会算进主包大小内，将不用的静态文件从打包运行时的目录（如：unpackage\dist\dev\mp-weixin）中删除即可；
+正确的调试方法应该将一些图片资源转为线上，比如上传至图床或让后端返回URL链接。
+问题：手机真机调试APP端，误操作未对USB设备授权，导致无法真机运行 解决方案：
+USB重插手机，如还未弹出提示，先尝试从电脑中拔出，然后使用充电头充会电再重插，如还未提示可尝试重启电脑。
+问题：自定义导航栏多端适配的问题 &lt;template&gt; &lt;view class=&#34;page-index-nav-bar flex-row justify-between&#34; :style=&#34;navigatorBarStyle&#34; &gt; &lt;view class=&#34;flex-row align-center search-container&#34; :style=&#34;&#39;height: &#39; &#43; navHeight &#43; &#39;px&#39;&#34; &gt; &lt;image class=&#34;youping-icon&#34; src=&#34;." />
+  <meta
+    name="author"
+    content=""
+  />
+  
+
+  
+  
+  
+  
+  
+  
+  <link rel="preload stylesheet" as="style" href="https://arutoriacode.github.io/main.min.css" />
+
+  
+  <script
+    defer
+    src="https://arutoriacode.github.io/highlight.min.js"
+    onload="hljs.initHighlightingOnLoad();"
+  ></script>
+  
+
+  
+   
+  <link rel="preload" as="image" href="https://arutoriacode.github.io/theme.png" />
+
+  
+  
+  
+  <link rel="preload" as="image" href="https://avatars.githubusercontent.com/u/37136717" />
+  
+  
+
+  
+  <link rel="preload" as="image" href="https://arutoriacode.github.io/github.svg" />
+  
+
+  
+  <link rel="icon" href="https://arutoriacode.github.io/favicon.ico" />
+  <link rel="apple-touch-icon" href="https://arutoriacode.github.io/apple-touch-icon.png" />
+
+  
+  <meta name="generator" content="Hugo 0.110.0">
+
+  
+  
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <meta property="og:title" content=" uni-app 调试问题记录" />
+<meta property="og:description" content="主要记录学习uni-app跨端遇到的问题和解决方案
+问题：样式未能覆盖（跨端） 在微信小程序端可能与H5、APP的样式不一致，样式并没有被覆盖
+解决方案：
+方案一：如果样式是调整上下外边距的可以使用 进行包裹，然后定义该 的样式即可
+方案二：使用 ::v-deep 进行穿透，微信小程序还需要设置 options.styleIsolation 选项：
+&lt;template&gt; &lt;view class=&#34;container&#34;&gt; &lt;custom-componet&gt;&lt;/custom-componet&gt; &lt;/view&gt; &lt;/template&gt; &lt;script&gt; export default { options: { styleIsolation: &#39;shared&#39; // 微信小程序端一定要配置该项 } } &lt;/script&gt; &lt;style&gt; /** 微信小程序还要求::v-deep前面必须还要有父元素的类名存在 **/ .container ::v-deep .custom-component-class-name { /* 覆盖 custom-component 的样式 */ } &lt;/style&gt; 问题：小程序主包太大无法预览和发布、真机调试 微信小程序预览和发布的主包大小是有限制的，最大 4MB ，超过后是无法真机调试的查看效果的
+解决方案：
+将 HBuilderX 一 运行 一 运行到小程序模拟器 一 运行时是否压缩代码 勾选上，如果依旧超过限制无法真机调试，请注意静态文件是否有过大的文件，哪怕你在代码中不导入使用也会算进主包大小内，将不用的静态文件从打包运行时的目录（如：unpackage\dist\dev\mp-weixin）中删除即可；
+正确的调试方法应该将一些图片资源转为线上，比如上传至图床或让后端返回URL链接。
+问题：手机真机调试APP端，误操作未对USB设备授权，导致无法真机运行 解决方案：
+USB重插手机，如还未弹出提示，先尝试从电脑中拔出，然后使用充电头充会电再重插，如还未提示可尝试重启电脑。
+问题：自定义导航栏多端适配的问题 &lt;template&gt; &lt;view class=&#34;page-index-nav-bar flex-row justify-between&#34; :style=&#34;navigatorBarStyle&#34; &gt; &lt;view class=&#34;flex-row align-center search-container&#34; :style=&#34;&#39;height: &#39; &#43; navHeight &#43; &#39;px&#39;&#34; &gt; &lt;image class=&#34;youping-icon&#34; src=&#34;." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://arutoriacode.github.io/posts/uni-app-%E8%B0%83%E8%AF%95%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-07-06T19:31:46+08:00" />
+<meta property="article:modified_time" content="2023-07-06T19:31:46+08:00" />
+
+  
+  <meta itemprop="name" content=" uni-app 调试问题记录">
+<meta itemprop="description" content="主要记录学习uni-app跨端遇到的问题和解决方案
+问题：样式未能覆盖（跨端） 在微信小程序端可能与H5、APP的样式不一致，样式并没有被覆盖
+解决方案：
+方案一：如果样式是调整上下外边距的可以使用 进行包裹，然后定义该 的样式即可
+方案二：使用 ::v-deep 进行穿透，微信小程序还需要设置 options.styleIsolation 选项：
+&lt;template&gt; &lt;view class=&#34;container&#34;&gt; &lt;custom-componet&gt;&lt;/custom-componet&gt; &lt;/view&gt; &lt;/template&gt; &lt;script&gt; export default { options: { styleIsolation: &#39;shared&#39; // 微信小程序端一定要配置该项 } } &lt;/script&gt; &lt;style&gt; /** 微信小程序还要求::v-deep前面必须还要有父元素的类名存在 **/ .container ::v-deep .custom-component-class-name { /* 覆盖 custom-component 的样式 */ } &lt;/style&gt; 问题：小程序主包太大无法预览和发布、真机调试 微信小程序预览和发布的主包大小是有限制的，最大 4MB ，超过后是无法真机调试的查看效果的
+解决方案：
+将 HBuilderX 一 运行 一 运行到小程序模拟器 一 运行时是否压缩代码 勾选上，如果依旧超过限制无法真机调试，请注意静态文件是否有过大的文件，哪怕你在代码中不导入使用也会算进主包大小内，将不用的静态文件从打包运行时的目录（如：unpackage\dist\dev\mp-weixin）中删除即可；
+正确的调试方法应该将一些图片资源转为线上，比如上传至图床或让后端返回URL链接。
+问题：手机真机调试APP端，误操作未对USB设备授权，导致无法真机运行 解决方案：
+USB重插手机，如还未弹出提示，先尝试从电脑中拔出，然后使用充电头充会电再重插，如还未提示可尝试重启电脑。
+问题：自定义导航栏多端适配的问题 &lt;template&gt; &lt;view class=&#34;page-index-nav-bar flex-row justify-between&#34; :style=&#34;navigatorBarStyle&#34; &gt; &lt;view class=&#34;flex-row align-center search-container&#34; :style=&#34;&#39;height: &#39; &#43; navHeight &#43; &#39;px&#39;&#34; &gt; &lt;image class=&#34;youping-icon&#34; src=&#34;."><meta itemprop="datePublished" content="2023-07-06T19:31:46+08:00" />
+<meta itemprop="dateModified" content="2023-07-06T19:31:46+08:00" />
+<meta itemprop="wordCount" content="220">
+<meta itemprop="keywords" content="" />
+  
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content=" uni-app 调试问题记录"/>
+<meta name="twitter:description" content="主要记录学习uni-app跨端遇到的问题和解决方案
+问题：样式未能覆盖（跨端） 在微信小程序端可能与H5、APP的样式不一致，样式并没有被覆盖
+解决方案：
+方案一：如果样式是调整上下外边距的可以使用 进行包裹，然后定义该 的样式即可
+方案二：使用 ::v-deep 进行穿透，微信小程序还需要设置 options.styleIsolation 选项：
+&lt;template&gt; &lt;view class=&#34;container&#34;&gt; &lt;custom-componet&gt;&lt;/custom-componet&gt; &lt;/view&gt; &lt;/template&gt; &lt;script&gt; export default { options: { styleIsolation: &#39;shared&#39; // 微信小程序端一定要配置该项 } } &lt;/script&gt; &lt;style&gt; /** 微信小程序还要求::v-deep前面必须还要有父元素的类名存在 **/ .container ::v-deep .custom-component-class-name { /* 覆盖 custom-component 的样式 */ } &lt;/style&gt; 问题：小程序主包太大无法预览和发布、真机调试 微信小程序预览和发布的主包大小是有限制的，最大 4MB ，超过后是无法真机调试的查看效果的
+解决方案：
+将 HBuilderX 一 运行 一 运行到小程序模拟器 一 运行时是否压缩代码 勾选上，如果依旧超过限制无法真机调试，请注意静态文件是否有过大的文件，哪怕你在代码中不导入使用也会算进主包大小内，将不用的静态文件从打包运行时的目录（如：unpackage\dist\dev\mp-weixin）中删除即可；
+正确的调试方法应该将一些图片资源转为线上，比如上传至图床或让后端返回URL链接。
+问题：手机真机调试APP端，误操作未对USB设备授权，导致无法真机运行 解决方案：
+USB重插手机，如还未弹出提示，先尝试从电脑中拔出，然后使用充电头充会电再重插，如还未提示可尝试重启电脑。
+问题：自定义导航栏多端适配的问题 &lt;template&gt; &lt;view class=&#34;page-index-nav-bar flex-row justify-between&#34; :style=&#34;navigatorBarStyle&#34; &gt; &lt;view class=&#34;flex-row align-center search-container&#34; :style=&#34;&#39;height: &#39; &#43; navHeight &#43; &#39;px&#39;&#34; &gt; &lt;image class=&#34;youping-icon&#34; src=&#34;."/>
+
+  
+  
+</head>
+
+  <body class="text-black duration-200 ease-out dark:text-white">
+    <header class="mx-auto flex h-[5rem] max-w-3xl px-8 lg:justify-center">
+  <div class="relative z-50 mr-auto flex items-center">
+    <a
+      class="-translate-x-[1px] -translate-y-0.5 text-3xl font-bold"
+      href="https://arutoriacode.github.io/"
+      >无限灰</a
+    >
+    <a
+      class="btn-dark ml-6 h-6 w-6 shrink-0 cursor-pointer [background:url(./theme.png)_left_center/_auto_theme('spacing.6')_no-repeat] [transition:_background-position_0.4s_steps(5)] dark:[background-position:right]"
+    ></a>
+  </div>
+
+  <a
+    class="btn-menu relative z-50 -mr-8 flex h-[5rem] w-[5rem] shrink-0 cursor-pointer flex-col items-center justify-center gap-2.5 lg:hidden"
+  ></a>
+
+  
+  <script>
+    
+    const htmlClass = document.documentElement.classList;
+    setTimeout(() => {
+      htmlClass.remove('not-ready');
+    }, 10);
+
+    
+    const btnMenu = document.querySelector('.btn-menu');
+    btnMenu.addEventListener('click', () => {
+      htmlClass.toggle('open');
+    });
+
+    
+    const metaTheme = document.querySelector('meta[name="theme-color"]');
+    const lightBg = `"#fbfbfb"`.replace(/"/g, '');
+    const setDark = (isDark) => {
+      metaTheme.setAttribute('content', isDark ? '#000' : lightBg);
+      htmlClass[isDark ? 'add' : 'remove']('dark');
+      localStorage.setItem('dark', isDark);
+    };
+
+    
+    const darkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+    if (htmlClass.contains('dark')) {
+      setDark(true);
+    } else {
+      const darkVal = localStorage.getItem('dark');
+      setDark(darkVal ? darkVal === 'true' : darkScheme.matches);
+    }
+
+    
+    darkScheme.addEventListener('change', (event) => {
+      setDark(event.matches);
+    });
+
+    
+    const btnDark = document.querySelector('.btn-dark');
+    btnDark.addEventListener('click', () => {
+      setDark(localStorage.getItem('dark') !== 'true');
+    });
+  </script>
+
+  <div
+    class="nav-wrapper fixed inset-x-0 top-full z-40 flex h-full select-none flex-col justify-center pb-16 duration-200 dark:bg-black lg:static lg:h-auto lg:flex-row lg:!bg-transparent lg:pb-0 lg:transition-none"
+  >
+    
+    
+    <nav class="lg:ml-12 lg:flex lg:flex-row lg:items-center lg:space-x-6">
+      
+      <a
+        class="block text-center text-2xl leading-[5rem] lg:text-base lg:font-normal"
+        href="/elysia"
+        >低代码设计器-elysia</a
+      >
+      
+    </nav>
+    
+
+    
+    <nav
+      class="mt-12 flex justify-center space-x-10 dark:invert lg:mt-0 lg:ml-12 lg:items-center lg:space-x-6"
+    >
+      
+      <a
+        class="h-8 w-8 [background:var(--url)_center_center/cover_no-repeat] lg:h-6 lg:w-6"
+        style="--url: url(./github.svg)"
+        href=" https://github.com/ArutoriaCode "
+        target="_blank"
+      ></a>
+      
+    </nav>
+    
+  </div>
+</header>
+
+
+    <main
+      class="prose prose-neutral relative mx-auto min-h-[calc(100%-10rem)] max-w-3xl px-8 pt-20 pb-32 dark:prose-invert"
+    >
+      
+
+<article>
+  <header class="mb-20">
+    <h1 class="!my-0 pb-2.5"> uni-app 调试问题记录</h1>
+
+    
+    <div class="text-sm opacity-60">
+      
+      <time>Jul 6, 2023</time>
+      
+      
+    </div>
+    
+  </header>
+
+  <section><p>主要记录学习uni-app跨端遇到的问题和解决方案</p>
+<h3 id="问题样式未能覆盖跨端">问题：样式未能覆盖（跨端）</h3>
+<p>在微信小程序端可能与H5、APP的样式不一致，样式并没有被覆盖</p>
+<p>解决方案：</p>
+<p>方案一：如果样式是调整上下外边距的可以使用 <strong><!-- raw HTML omitted --></strong> 进行包裹，然后定义该  <strong><!-- raw HTML omitted --></strong>  的样式即可</p>
+<p>方案二：使用 <strong>::v-deep</strong> 进行穿透，微信小程序还需要设置 <strong>options.styleIsolation</strong> 选项：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vue" data-lang="vue"><span style="display:flex;"><span>&lt;<span style="color:#f92672">template</span>&gt;
+</span></span><span style="display:flex;"><span>	&lt;<span style="color:#f92672">view</span> <span style="color:#a6e22e">class</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;container&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>        &lt;<span style="color:#f92672">custom-componet</span>&gt;<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/custom-componet&gt;</span>
+</span></span><span style="display:flex;"><span>    &lt;/<span style="color:#f92672">view</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#f92672">template</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;<span style="color:#f92672">script</span>&gt;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">default</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">options</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">styleIsolation</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;shared&#39;</span> <span style="color:#75715e">// 微信小程序端一定要配置该项
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#f92672">script</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;<span style="color:#f92672">style</span>&gt;
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/** 微信小程序还要求::v-deep前面必须还要有父元素的类名存在 **/</span>
+</span></span><span style="display:flex;"><span>    .<span style="color:#a6e22e">container</span> <span style="color:#f92672">::</span><span style="color:#a6e22e">v</span><span style="color:#f92672">-</span><span style="color:#a6e22e">deep</span> .<span style="color:#a6e22e">custom</span><span style="color:#f92672">-</span><span style="color:#a6e22e">component</span><span style="color:#f92672">-</span><span style="color:#66d9ef">class</span><span style="color:#f92672">-</span><span style="color:#a6e22e">name</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">/* 覆盖 custom-component 的样式 */</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#f92672">style</span>&gt;
+</span></span></code></pre></div><h3 id="问题小程序主包太大无法预览和发布真机调试">问题：小程序主包太大无法预览和发布、真机调试</h3>
+<p>微信小程序预览和发布的主包大小是有限制的，最大 <strong>4MB</strong> ，超过后是无法真机调试的查看效果的</p>
+<p>解决方案：</p>
+<p>将 <strong>HBuilderX</strong> 一 <strong>运行</strong> 一  <strong>运行到小程序模拟器</strong> 一  <strong>运行时是否压缩代码</strong> 勾选上，如果依旧超过限制无法真机调试，请注意静态文件是否有过大的文件，哪怕你在代码中不导入使用也会算进主包大小内，将不用的静态文件从打包运行时的目录（如：<strong>unpackage\dist\dev\mp-weixin</strong>）中删除即可；</p>
+<p>正确的调试方法应该将一些图片资源转为线上，比如上传至图床或让后端返回URL链接。</p>
+<h3 id="问题手机真机调试app端误操作未对usb设备授权导致无法真机运行">问题：手机真机调试APP端，误操作未对USB设备授权，导致无法真机运行</h3>
+<p>解决方案：</p>
+<p>USB重插手机，如还未弹出提示，先尝试从电脑中拔出，然后使用充电头充会电再重插，如还未提示可尝试重启电脑。</p>
+<h3 id="问题自定义导航栏多端适配的问题">问题：自定义导航栏多端适配的问题</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vue" data-lang="vue"><span style="display:flex;"><span>&lt;<span style="color:#f92672">template</span>&gt;
+</span></span><span style="display:flex;"><span>  &lt;<span style="color:#f92672">view</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">class</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;page-index-nav-bar flex-row justify-between&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">:style</span><span style="color:#e6db74">=&#34;navigatorBarStyle&#34;</span>
+</span></span><span style="display:flex;"><span>  &gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">view</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">class</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;flex-row align-center search-container&#34;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">:</span><span style="color:#a6e22e">style</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;&#39;height: &#39; + navHeight + &#39;px&#39;&#34;</span>
+</span></span><span style="display:flex;"><span>    &gt;
+</span></span><span style="display:flex;"><span>      &lt;<span style="color:#f92672">image</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">class</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;youping-icon&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">src</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;../../../static/images/navi_title.png&#34;</span>
+</span></span><span style="display:flex;"><span>      &gt;&lt;/<span style="color:#f92672">image</span>&gt;
+</span></span><span style="display:flex;"><span>      &lt;<span style="color:#f92672">view</span> <span style="color:#a6e22e">class</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;mock-search-input flex-row align-center&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>        &lt;<span style="color:#f92672">u-icon</span> <span style="color:#a6e22e">name</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;search&#34;</span> <span style="color:#a6e22e">size</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;38&#34;</span> <span style="color:#a6e22e">color</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;#909399&#34;</span>&gt;<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/u-icon&gt;</span>
+</span></span><span style="display:flex;"><span>        &lt;<span style="color:#f92672">text</span>&gt;<span style="color:#a6e22e">搜索</span>&lt;/<span style="color:#f92672">text</span>&gt;
+</span></span><span style="display:flex;"><span>      &lt;/<span style="color:#f92672">view</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;/<span style="color:#f92672">view</span>&gt;
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">&lt;!--</span> <span style="color:#a6e22e">右侧消息提示在微信小程序中不显示</span><span style="color:#960050;background-color:#1e0010">，</span><span style="color:#a6e22e">因为它被微信小程序的胶囊覆盖了</span> <span style="color:#f92672">--&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">&lt;!--</span> <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#a6e22e">ifndef</span> <span style="color:#a6e22e">MP</span><span style="color:#f92672">-</span><span style="color:#a6e22e">WEIXIN</span> <span style="color:#f92672">--&gt;</span>
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">view</span> <span style="color:#a6e22e">class</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;nav-bar-message&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>      &lt;<span style="color:#f92672">u-badge</span> <span style="color:#a6e22e">shape</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;circle&#34;</span> <span style="color:#a6e22e">max</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;99&#34;</span> <span style="color:#a6e22e">value</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;99&#34;</span> <span style="color:#a6e22e">absolute</span>&gt;<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/u-badge&gt;</span>
+</span></span><span style="display:flex;"><span>      &lt;<span style="color:#f92672">u-icon</span> <span style="color:#a6e22e">name</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;chat&#34;</span> <span style="color:#a6e22e">size</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;58&#34;</span> <span style="color:#a6e22e">color</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;#a87e40&#34;</span>&gt;<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/u-icon&gt;</span>
+</span></span><span style="display:flex;"><span>    &lt;/<span style="color:#f92672">view</span>&gt;
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">&lt;!--</span> <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#a6e22e">endif</span> <span style="color:#f92672">--&gt;</span>
+</span></span><span style="display:flex;"><span>  &lt;/<span style="color:#f92672">view</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#f92672">template</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;<span style="color:#f92672">script</span>&gt;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">default</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">data</span>() {
+</span></span><span style="display:flex;"><span>    	<span style="color:#66d9ef">return</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">navigatorBarStyle</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;&#39;</span>,
+</span></span><span style="display:flex;"><span>      		<span style="color:#a6e22e">navHeight</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">44</span>
+</span></span><span style="display:flex;"><span>        }  
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">beforeMount</span> () {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// #ifdef MP-WEIXIN
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">custom</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">wx</span>.<span style="color:#a6e22e">getMenuButtonBoundingClientRect</span>()
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">marginTop</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">custom</span>.<span style="color:#a6e22e">top</span> <span style="color:#75715e">// 胶囊顶部距离屏幕顶部的距离
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">navigatorBarStyle</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">`margin-top: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">marginTop</span><span style="color:#e6db74">}</span><span style="color:#e6db74">px;`</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">navHeight</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">custom</span>.<span style="color:#a6e22e">height</span> <span style="color:#75715e">// 取胶囊高度 搜索框能与胶囊对正
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#75715e">// #endif
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// #ifdef APP
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">statusBarHeight</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">uni</span>.<span style="color:#a6e22e">getSystemInfoSync</span>().<span style="color:#a6e22e">statusBarHeight</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">navigatorBarStyle</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">`margin-top: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">statusBarHeight</span><span style="color:#e6db74">}</span><span style="color:#e6db74">px`</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// #endif
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#f92672">script</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;<span style="color:#f92672">style</span>&gt;
+</span></span><span style="display:flex;"><span>.<span style="color:#a6e22e">page</span><span style="color:#f92672">-</span><span style="color:#a6e22e">index</span><span style="color:#f92672">-</span><span style="color:#a6e22e">nav</span><span style="color:#f92672">-</span><span style="color:#a6e22e">bar</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">height</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">44</span><span style="color:#a6e22e">px</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">padding</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">24</span><span style="color:#a6e22e">rpx</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">/* 非微信小程序环境则对齐居中 */</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">align</span><span style="color:#f92672">-</span><span style="color:#a6e22e">items</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">center</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">box</span><span style="color:#f92672">-</span><span style="color:#a6e22e">sizing</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">border</span><span style="color:#f92672">-</span><span style="color:#a6e22e">box</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">/* #ifdef MP-WEIXIN */</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">padding</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">24</span><span style="color:#a6e22e">rpx</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">/* flex-start 与胶囊顶部对齐 */</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">align</span><span style="color:#f92672">-</span><span style="color:#a6e22e">items</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">flex</span><span style="color:#f92672">-</span><span style="color:#a6e22e">start</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">/* #endif */</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">/* ... 其他代码省略 */</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#f92672">style</span>&gt;
+</span></span></code></pre></div><p>网页h5适配效果：
+<img src="/img/h5-preview.jpg" alt="网页h5"></p>
+<p>手机APP适配效果：
+<img src="/img/app-preview.jpg" alt="手机App"></p>
+<p>微信小程序适配效果：
+<img src="/img/wx-preview.jpg" alt="微信小程序"></p>
+<h3 id="其他问题待补充">其他问题：待补充</h3>
+</section>
+
+  
+  
+
+  
+  
+  
+  <nav class="mt-24 flex rounded-lg bg-black/[3%] text-lg dark:bg-white/[8%]">
+    
+    
+    <a
+      class="ml-auto flex w-1/2 items-center justify-end rounded-r-md p-6 pl-3 no-underline hover:bg-black/[2%]"
+      href="https://arutoriacode.github.io/posts/%E4%BD%8E%E4%BB%A3%E7%A0%81%E8%A1%A8%E5%8D%95%E8%AE%BE%E8%AE%A1%E5%99%A8%E8%AE%BE%E8%AE%A1%E6%80%9D%E8%B7%AF%E4%B8%80/"
+      ><span>低代码表单设计器设计思路（一）</span><span class="ml-1.5">→</span></a
+    >
+    
+  </nav>
+  
+
+  
+  
+
+  
+  
+</article>
+
+
+    </main>
+
+    <footer
+  class="opaco mx-auto flex h-[5rem] max-w-3xl items-center px-8 text-[0.9em] opacity-60"
+>
+  <div class="mr-auto">
+    &copy; 2023
+    <a class="link" href="https://arutoriacode.github.io/">无限灰</a>
+  </div>
+  <a class="link mx-6" href="https://gohugo.io/" rel="noopener" target="_blank"
+    >Powered by Hugo️️</a
+  >️
+  <a
+    class="link"
+    href="https://github.com/nanxiaobei/hugo-paper"
+    rel="noopener"
+    target="_blank"
+    >▷ Paper 6</a
+  >
+</footer>
+
+  </body>
+</html>
