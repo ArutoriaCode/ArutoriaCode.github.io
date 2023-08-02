@@ -6,7 +6,23 @@
     <description>Recent content in Posts on 无限灰</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Thu, 06 Jul 2023 19:31:46 +0800</lastBuildDate><atom:link href="https://arutoriacode.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 02 Aug 2023 21:27:10 +0800</lastBuildDate><atom:link href="https://arutoriacode.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>CocosCreator游戏引擎问题归集</title>
+      <link>https://arutoriacode.github.io/posts/cocoscreator%E6%B8%B8%E6%88%8F%E5%BC%95%E6%93%8E%E9%97%AE%E9%A2%98%E5%BD%92%E9%9B%86/</link>
+      <pubDate>Wed, 02 Aug 2023 21:27:10 +0800</pubDate>
+      
+      <guid>https://arutoriacode.github.io/posts/cocoscreator%E6%B8%B8%E6%88%8F%E5%BC%95%E6%93%8E%E9%97%AE%E9%A2%98%E5%BD%92%E9%9B%86/</guid>
+      <description>最近在使用Cocos creator游戏引擎仿做一款2D游戏，第一次开发游戏，同时也是第一次使用这个游戏引擎，只能一边看文档一边做。
+将Node节点缩放后无法触发触摸事件的问题 这个问题困扰我有两天之久，在这之前的解决方案是触摸前记录一下旧的缩放比例，在触摸结束后再还原这个比例。
+const oldScale = node.scale.clone() 但还是一直在思考这个问题，如果是缩小导致手指无法触摸还好说，关键是我是放大比例，这就让我很困扰。
+首先来看下我的缩放操作
+// 显示放大比例，原比例是 0.8, 0.8 node.setScale(0.98, 0.98) // 然后进行缓动动画 tween(node) .to( 0.2, { position: endPos }, { onUpdate: (t, radio) =&amp;gt; { node.position = toBezier(radio, startPos, midPos, endPos); } } ) .to(0.2, { scale: new Vec3(0.8, 0.8) }) .start(); 一旦缓动动画结束后，如果不进行还原比例就无法触摸移动了；导致这个问题原因是：
+在实例化 Vec3 时未传递 Z 轴：
+new Vec3(0.8, 0.8, 1) // 一定要传递第三个参数：Z轴 思考了两天我都想不到一个2D游戏的Z轴还能影响到触摸，这也是我写2D游戏未考虑的，觉得Z轴在2D项目用不上，干脆不传，同时也想着他引擎内部是不是会内部补齐。
+&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash; 其他问题待记录 &amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;</description>
+    </item>
+    
     <item>
       <title> uni-app 调试问题记录</title>
       <link>https://arutoriacode.github.io/posts/uni-app-%E8%B0%83%E8%AF%95%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95/</link>
