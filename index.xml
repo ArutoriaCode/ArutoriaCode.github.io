@@ -20,11 +20,16 @@ const oldScale = node.scale.clone() 但还是一直在思考这个问题，如�
 // 显示放大比例，原比例是 0.8, 0.8 node.setScale(0.98, 0.98) // 然后进行缓动动画 tween(node) .to( 0.2, { position: endPos }, { onUpdate: (t, radio) =&amp;gt; { node.position = toBezier(radio, startPos, midPos, endPos); } } ) .to(0.2, { scale: new Vec3(0.8, 0.8) }) .start(); 一旦缓动动画结束后，如果不进行还原比例就无法触摸移动了；导致这个问题原因是：
 在实例化 Vec3 时未传递 Z 轴：
 new Vec3(0.8, 0.8, 1) // 一定要传递第三个参数：Z轴 思考了两天我都想不到一个2D游戏的Z轴还能影响到触摸，这也是我写2D游戏未考虑的，觉得Z轴在2D项目用不上，干脆不传，同时也想着他引擎内部是不是会内部补齐。
-&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash; 其他问题待记录 &amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;</description>
+游戏页面嵌入到uni-app的web-view组件加载远程图片却黑屏的问题 其实这个问题不知道归到uniapp还是cocos里，由于游戏正式发布是只有APP端的，但为了调试方便，同时写了H5（调试查看大体布局用）和APP的两个端；
+而我的需求是在游戏加载过程中展示一个页面级的加载进度，也就是要覆盖在web-view，而在APP端由于web-view原生组件无法被其他组件覆盖，所以使用了uniapp官方提供的subnvue写法，这个没啥问题，关键在于h5端我就没准备写一个绝对定位浮动的加载页面，直接简单粗暴的给web-view加上个v-show，毕竟uniapp官方只是说App端不能用v-show而是用v-if；
+当我对接接口，将远程图片加载回来，一切都没问题，在修改完cocos的代码触发热更新后，在uniapp的h5预览页面也能顺利的显示出图片，当我再次刷新整个浏览器页面时问题就出现了，图片在开发者工具的网络面板是正常请求到并且能预览到的，但是嵌入的cocos页面就是黑屏（背景图没有加载显示出来就是黑屏），cocos页面的开发工具和帧数都是能显示出来的：
+起初我以为是跨域问题，但当前浏览器本身就已经被我突破了跨域限制了，不然也请求不到图片了；而当我尝试在cocos代码加上debugger调试时，保存后触发热更新它又成功显示出页面了，这就非常离谱了，关键没有任何报错信息（我忽略了警告级别的log），然后就是各种尝试，是不是加载回来的图片转为精灵贴图的代码出了问题，又debugger对比未加载出来和热更新加载出来时的object对象，检查了对象的属性：是否可用，是否启用等；
+最终耗费了一段时间才在控制台发现了这一段警告日志提示：
+WebGL: INVALID_VALUE: texSubImage2D: no canvas no canvas 的意思是找不到 canvas ?</description>
     </item>
     
     <item>
-      <title> uni-app 调试问题记录</title>
+      <title> uni-app问题归集</title>
       <link>https://arutoriacode.github.io/posts/uni-app-%E8%B0%83%E8%AF%95%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95/</link>
       <pubDate>Thu, 06 Jul 2023 19:31:46 +0800</pubDate>
       
