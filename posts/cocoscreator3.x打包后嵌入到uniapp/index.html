@@ -52,11 +52,12 @@
   
   <meta name="description" content="首先Cocos本身就支持跨平台，可以打包成APP，但由于项目中游戏只是APP的一部分，还有其他界面要开发，用游戏引擎来写APP的一些交互逻辑页面确实不太合适，所以在技术选型上又选择uniapp。
 uniapp的web-view是可以嵌入在线的地址和本地的html页面，但嵌入本地的html仅支持APP端，如果你开发需要兼容多端，那么直接使用在线地址的形式嵌入即可，下面的内容也不必阅读了。
-需求上因为只需要支持APP端即可，并且使用在线地址嵌入在等待游戏加载的时间有点久，所以我选用了将游戏打包成h5并以本地html页面嵌入到uniapp形式，省去了需要请求游戏引擎js等文件的步骤。
-但在嵌入发生一些意外，游戏页面加载时会报**file://**协议跨域，从而加载游戏失败，在Cocos论坛找到了解决方案：
-在游戏项目的构建模板中修改fetch函数： (构建模板在游戏引擎编辑器左上角菜单栏-项目-创建项目构建模板（选择对应的构建平台）-web手机端即可创建)
-function fetchLocal(url) { return new Promise(function (resolve, reject) { var xhr = new XMLHttpRequest(); xhr.onload = function () { resolve( new Response(xhr.response, { status: 200 }) ); }; xhr.onerror = function () { reject(new TypeError(&#34;Local request failed&#34;)); }; xhr.open(&#34;GET&#34;, url); xhr.responseType = &#34;arraybuffer&#34;; xhr.send(null); }); } window.fetch = fetchLocal; 如果你的游戏需要使用到fetch来进行网络请求，你可以额外使用个属性来存储原来的fetch函数：
-// 在window.fetch被修改为fetchLocal之前赋值 window.fetchRemote = window.fetch; function fetchLocal(url) { ... } window.fetch = fetchLocal; 还有，如果你游戏还用到远程服务器上的图片作为背景啥的，那么此时也应该会导致报错的（还是因为跨域）" />
+需求上因为只需要支持APP端即可，并且使用在线地址嵌入在等待游戏加载的时间有点久，所以我选用了将游戏打包成h5并以本地html页面嵌入到uniapp形式，可以省去了请求游戏引擎js等文件的所需要消耗的时间。
+但在嵌入发生一些意外，游戏页面加载时会报 file 协议跨域，从而加载游戏失败，在Cocos论坛找到了解决方案：
+在游戏项目的构建模板中修改 fetch 函数：
+(构建模板在游戏引擎编辑器左上角菜单栏-项目-创建项目构建模板（选择对应的构建平台）-web手机端即可创建)
+function fetchLocal(url) { return new Promise(function (resolve, reject) { var xhr = new XMLHttpRequest(); xhr.onload = function () { resolve( new Response(xhr.response, { status: 200 }) ); }; xhr.onerror = function () { reject(new TypeError(&#34;Local request failed&#34;)); }; xhr.open(&#34;GET&#34;, url); xhr.responseType = &#34;arraybuffer&#34;; xhr.send(null); }); } window.fetch = fetchLocal; 如果你的游戏需要使用到 fetch 来进行网络请求，你可以额外使用 window 全局属性来替代原来的 fetch：
+// 在window.fetch被修改为fetchLocal之前赋值 window.fetchRemote = window.fetch; function fetchLocal(url) { ." />
   <meta
     name="author"
     content=""
@@ -116,11 +117,12 @@ function fetchLocal(url) { return new Promise(function (resolve, reject) { var x
   <meta property="og:title" content="CocosCreator3.x打包后嵌入到uniapp" />
 <meta property="og:description" content="首先Cocos本身就支持跨平台，可以打包成APP，但由于项目中游戏只是APP的一部分，还有其他界面要开发，用游戏引擎来写APP的一些交互逻辑页面确实不太合适，所以在技术选型上又选择uniapp。
 uniapp的web-view是可以嵌入在线的地址和本地的html页面，但嵌入本地的html仅支持APP端，如果你开发需要兼容多端，那么直接使用在线地址的形式嵌入即可，下面的内容也不必阅读了。
-需求上因为只需要支持APP端即可，并且使用在线地址嵌入在等待游戏加载的时间有点久，所以我选用了将游戏打包成h5并以本地html页面嵌入到uniapp形式，省去了需要请求游戏引擎js等文件的步骤。
-但在嵌入发生一些意外，游戏页面加载时会报**file://**协议跨域，从而加载游戏失败，在Cocos论坛找到了解决方案：
-在游戏项目的构建模板中修改fetch函数： (构建模板在游戏引擎编辑器左上角菜单栏-项目-创建项目构建模板（选择对应的构建平台）-web手机端即可创建)
-function fetchLocal(url) { return new Promise(function (resolve, reject) { var xhr = new XMLHttpRequest(); xhr.onload = function () { resolve( new Response(xhr.response, { status: 200 }) ); }; xhr.onerror = function () { reject(new TypeError(&#34;Local request failed&#34;)); }; xhr.open(&#34;GET&#34;, url); xhr.responseType = &#34;arraybuffer&#34;; xhr.send(null); }); } window.fetch = fetchLocal; 如果你的游戏需要使用到fetch来进行网络请求，你可以额外使用个属性来存储原来的fetch函数：
-// 在window.fetch被修改为fetchLocal之前赋值 window.fetchRemote = window.fetch; function fetchLocal(url) { ... } window.fetch = fetchLocal; 还有，如果你游戏还用到远程服务器上的图片作为背景啥的，那么此时也应该会导致报错的（还是因为跨域）" />
+需求上因为只需要支持APP端即可，并且使用在线地址嵌入在等待游戏加载的时间有点久，所以我选用了将游戏打包成h5并以本地html页面嵌入到uniapp形式，可以省去了请求游戏引擎js等文件的所需要消耗的时间。
+但在嵌入发生一些意外，游戏页面加载时会报 file 协议跨域，从而加载游戏失败，在Cocos论坛找到了解决方案：
+在游戏项目的构建模板中修改 fetch 函数：
+(构建模板在游戏引擎编辑器左上角菜单栏-项目-创建项目构建模板（选择对应的构建平台）-web手机端即可创建)
+function fetchLocal(url) { return new Promise(function (resolve, reject) { var xhr = new XMLHttpRequest(); xhr.onload = function () { resolve( new Response(xhr.response, { status: 200 }) ); }; xhr.onerror = function () { reject(new TypeError(&#34;Local request failed&#34;)); }; xhr.open(&#34;GET&#34;, url); xhr.responseType = &#34;arraybuffer&#34;; xhr.send(null); }); } window.fetch = fetchLocal; 如果你的游戏需要使用到 fetch 来进行网络请求，你可以额外使用 window 全局属性来替代原来的 fetch：
+// 在window.fetch被修改为fetchLocal之前赋值 window.fetchRemote = window.fetch; function fetchLocal(url) { ." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://arutoriacode.github.io/posts/cocoscreator3.x%E6%89%93%E5%8C%85%E5%90%8E%E5%B5%8C%E5%85%A5%E5%88%B0uniapp/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2023-09-10T22:45:15+08:00" />
@@ -130,24 +132,26 @@ function fetchLocal(url) { return new Promise(function (resolve, reject) { var x
   <meta itemprop="name" content="CocosCreator3.x打包后嵌入到uniapp">
 <meta itemprop="description" content="首先Cocos本身就支持跨平台，可以打包成APP，但由于项目中游戏只是APP的一部分，还有其他界面要开发，用游戏引擎来写APP的一些交互逻辑页面确实不太合适，所以在技术选型上又选择uniapp。
 uniapp的web-view是可以嵌入在线的地址和本地的html页面，但嵌入本地的html仅支持APP端，如果你开发需要兼容多端，那么直接使用在线地址的形式嵌入即可，下面的内容也不必阅读了。
-需求上因为只需要支持APP端即可，并且使用在线地址嵌入在等待游戏加载的时间有点久，所以我选用了将游戏打包成h5并以本地html页面嵌入到uniapp形式，省去了需要请求游戏引擎js等文件的步骤。
-但在嵌入发生一些意外，游戏页面加载时会报**file://**协议跨域，从而加载游戏失败，在Cocos论坛找到了解决方案：
-在游戏项目的构建模板中修改fetch函数： (构建模板在游戏引擎编辑器左上角菜单栏-项目-创建项目构建模板（选择对应的构建平台）-web手机端即可创建)
-function fetchLocal(url) { return new Promise(function (resolve, reject) { var xhr = new XMLHttpRequest(); xhr.onload = function () { resolve( new Response(xhr.response, { status: 200 }) ); }; xhr.onerror = function () { reject(new TypeError(&#34;Local request failed&#34;)); }; xhr.open(&#34;GET&#34;, url); xhr.responseType = &#34;arraybuffer&#34;; xhr.send(null); }); } window.fetch = fetchLocal; 如果你的游戏需要使用到fetch来进行网络请求，你可以额外使用个属性来存储原来的fetch函数：
-// 在window.fetch被修改为fetchLocal之前赋值 window.fetchRemote = window.fetch; function fetchLocal(url) { ... } window.fetch = fetchLocal; 还有，如果你游戏还用到远程服务器上的图片作为背景啥的，那么此时也应该会导致报错的（还是因为跨域）"><meta itemprop="datePublished" content="2023-09-10T22:45:15+08:00" />
+需求上因为只需要支持APP端即可，并且使用在线地址嵌入在等待游戏加载的时间有点久，所以我选用了将游戏打包成h5并以本地html页面嵌入到uniapp形式，可以省去了请求游戏引擎js等文件的所需要消耗的时间。
+但在嵌入发生一些意外，游戏页面加载时会报 file 协议跨域，从而加载游戏失败，在Cocos论坛找到了解决方案：
+在游戏项目的构建模板中修改 fetch 函数：
+(构建模板在游戏引擎编辑器左上角菜单栏-项目-创建项目构建模板（选择对应的构建平台）-web手机端即可创建)
+function fetchLocal(url) { return new Promise(function (resolve, reject) { var xhr = new XMLHttpRequest(); xhr.onload = function () { resolve( new Response(xhr.response, { status: 200 }) ); }; xhr.onerror = function () { reject(new TypeError(&#34;Local request failed&#34;)); }; xhr.open(&#34;GET&#34;, url); xhr.responseType = &#34;arraybuffer&#34;; xhr.send(null); }); } window.fetch = fetchLocal; 如果你的游戏需要使用到 fetch 来进行网络请求，你可以额外使用 window 全局属性来替代原来的 fetch：
+// 在window.fetch被修改为fetchLocal之前赋值 window.fetchRemote = window.fetch; function fetchLocal(url) { ."><meta itemprop="datePublished" content="2023-09-10T22:45:15+08:00" />
 <meta itemprop="dateModified" content="2023-09-10T22:45:15+08:00" />
-<meta itemprop="wordCount" content="334">
+<meta itemprop="wordCount" content="343">
 <meta itemprop="keywords" content="" />
   
   <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="CocosCreator3.x打包后嵌入到uniapp"/>
 <meta name="twitter:description" content="首先Cocos本身就支持跨平台，可以打包成APP，但由于项目中游戏只是APP的一部分，还有其他界面要开发，用游戏引擎来写APP的一些交互逻辑页面确实不太合适，所以在技术选型上又选择uniapp。
 uniapp的web-view是可以嵌入在线的地址和本地的html页面，但嵌入本地的html仅支持APP端，如果你开发需要兼容多端，那么直接使用在线地址的形式嵌入即可，下面的内容也不必阅读了。
-需求上因为只需要支持APP端即可，并且使用在线地址嵌入在等待游戏加载的时间有点久，所以我选用了将游戏打包成h5并以本地html页面嵌入到uniapp形式，省去了需要请求游戏引擎js等文件的步骤。
-但在嵌入发生一些意外，游戏页面加载时会报**file://**协议跨域，从而加载游戏失败，在Cocos论坛找到了解决方案：
-在游戏项目的构建模板中修改fetch函数： (构建模板在游戏引擎编辑器左上角菜单栏-项目-创建项目构建模板（选择对应的构建平台）-web手机端即可创建)
-function fetchLocal(url) { return new Promise(function (resolve, reject) { var xhr = new XMLHttpRequest(); xhr.onload = function () { resolve( new Response(xhr.response, { status: 200 }) ); }; xhr.onerror = function () { reject(new TypeError(&#34;Local request failed&#34;)); }; xhr.open(&#34;GET&#34;, url); xhr.responseType = &#34;arraybuffer&#34;; xhr.send(null); }); } window.fetch = fetchLocal; 如果你的游戏需要使用到fetch来进行网络请求，你可以额外使用个属性来存储原来的fetch函数：
-// 在window.fetch被修改为fetchLocal之前赋值 window.fetchRemote = window.fetch; function fetchLocal(url) { ... } window.fetch = fetchLocal; 还有，如果你游戏还用到远程服务器上的图片作为背景啥的，那么此时也应该会导致报错的（还是因为跨域）"/>
+需求上因为只需要支持APP端即可，并且使用在线地址嵌入在等待游戏加载的时间有点久，所以我选用了将游戏打包成h5并以本地html页面嵌入到uniapp形式，可以省去了请求游戏引擎js等文件的所需要消耗的时间。
+但在嵌入发生一些意外，游戏页面加载时会报 file 协议跨域，从而加载游戏失败，在Cocos论坛找到了解决方案：
+在游戏项目的构建模板中修改 fetch 函数：
+(构建模板在游戏引擎编辑器左上角菜单栏-项目-创建项目构建模板（选择对应的构建平台）-web手机端即可创建)
+function fetchLocal(url) { return new Promise(function (resolve, reject) { var xhr = new XMLHttpRequest(); xhr.onload = function () { resolve( new Response(xhr.response, { status: 200 }) ); }; xhr.onerror = function () { reject(new TypeError(&#34;Local request failed&#34;)); }; xhr.open(&#34;GET&#34;, url); xhr.responseType = &#34;arraybuffer&#34;; xhr.send(null); }); } window.fetch = fetchLocal; 如果你的游戏需要使用到 fetch 来进行网络请求，你可以额外使用 window 全局属性来替代原来的 fetch：
+// 在window.fetch被修改为fetchLocal之前赋值 window.fetchRemote = window.fetch; function fetchLocal(url) { ."/>
 
   
   
@@ -269,10 +273,10 @@ function fetchLocal(url) { return new Promise(function (resolve, reject) { var x
 
   <section><p>首先Cocos本身就支持跨平台，可以打包成APP，但由于项目中游戏只是APP的一部分，还有其他界面要开发，用游戏引擎来写APP的一些交互逻辑页面确实不太合适，所以在技术选型上又选择uniapp。</p>
 <p>uniapp的web-view是可以嵌入在线的地址和本地的html页面，但嵌入本地的html仅支持APP端，如果你开发需要兼容多端，那么直接使用在线地址的形式嵌入即可，下面的内容也不必阅读了。</p>
-<p>需求上因为只需要支持APP端即可，并且使用在线地址嵌入在等待游戏加载的时间有点久，所以我选用了将游戏打包成h5并以本地html页面嵌入到uniapp形式，省去了需要请求游戏引擎js等文件的步骤。</p>
-<p>但在嵌入发生一些意外，游戏页面加载时会报**file://**协议跨域，从而加载游戏失败，在Cocos论坛找到了解决方案：</p>
-<p>在游戏项目的构建模板中修改<strong>fetch</strong>函数：
-(构建模板在游戏引擎编辑器左上角菜单栏-项目-创建项目构建模板（选择对应的构建平台）-web手机端即可创建)</p>
+<p>需求上因为只需要支持APP端即可，并且使用在线地址嵌入在等待游戏加载的时间有点久，所以我选用了将游戏打包成h5并以本地html页面嵌入到uniapp形式，可以省去了请求游戏引擎js等文件的所需要消耗的时间。</p>
+<p>但在嵌入发生一些意外，游戏页面加载时会报 <strong>file</strong> 协议跨域，从而加载游戏失败，在Cocos论坛找到了解决方案：</p>
+<p>在游戏项目的构建模板中修改 <strong>fetch</strong> 函数：</p>
+<p>(构建模板在游戏引擎编辑器左上角菜单栏-项目-创建项目构建模板（选择对应的构建平台）-web手机端即可创建)</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">fetchLocal</span>(<span style="color:#a6e22e">url</span>) {
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> Promise(<span style="color:#66d9ef">function</span> (<span style="color:#a6e22e">resolve</span>, <span style="color:#a6e22e">reject</span>) {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">xhr</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">XMLHttpRequest</span>();
@@ -293,7 +297,7 @@ function fetchLocal(url) { return new Promise(function (resolve, reject) { var x
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>window.<span style="color:#a6e22e">fetch</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">fetchLocal</span>;
-</span></span></code></pre></div><p>如果你的游戏需要使用到<strong>fetch</strong>来进行网络请求，你可以额外使用个属性来存储原来的<strong>fetch</strong>函数：</p>
+</span></span></code></pre></div><p>如果你的游戏需要使用到 <strong>fetch</strong> 来进行网络请求，你可以额外使用 <strong>window</strong> 全局属性来替代原来的 <strong>fetch</strong>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#75715e">// 在window.fetch被修改为fetchLocal之前赋值
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>window.<span style="color:#a6e22e">fetchRemote</span> <span style="color:#f92672">=</span> window.<span style="color:#a6e22e">fetch</span>;
 </span></span><span style="display:flex;"><span>
@@ -302,8 +306,8 @@ function fetchLocal(url) { return new Promise(function (resolve, reject) { var x
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>window.<span style="color:#a6e22e">fetch</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">fetchLocal</span>;
-</span></span></code></pre></div><p>还有，如果你游戏还用到远程服务器上的图片作为背景啥的，那么此时也应该会导致报错的（还是因为跨域）</p>
-<p>你还需要在修改<strong>Image</strong>对象：</p>
+</span></span></code></pre></div><p>还有，如果你游戏还用到远程服务器上的图片作为背景啥的，那么在运行时也应该会发生跨域问题的；</p>
+<p>所以你还需要在修改<strong>Image</strong>对象：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">OldImage</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">Image</span>;
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">oldProto</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">Image</span>.<span style="color:#a6e22e">prototype</span>;
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">Image</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span> (<span style="color:#a6e22e">width</span>, <span style="color:#a6e22e">height</span>) {
