@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<html
+  class="not-ready text-sm lg:text-base"
+  style="--bg: #fbfbfb"
+  lang="zh-CN"
+>
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, shrink-to-fit=no"
+  />
+
+  
+  <title>CocosCreator3.x打包后嵌入到uniapp - 无限灰</title>
+
+  
+  <meta name="theme-color" />
+  
+  <meta name="description" content="首先Cocos本身就支持跨平台，可以打包成APP，但由于项目中游戏只是APP的一部分，还有其他界面要开发，用游戏引擎来写APP的一些交互逻辑页面确实不太合适，所以在技术选型上又选择uniapp。
+uniapp的web-view是可以嵌入在线的地址和本地的html页面，但嵌入本地的html仅支持APP端，如果你开发需要兼容多端，那么直接使用在线地址的形式嵌入即可，下面的内容也不必阅读了。
+需求上因为只需要支持APP端即可，并且使用在线地址嵌入在等待游戏加载的时间有点久，所以我选用了将游戏打包成h5并以本地html页面嵌入到uniapp形式，省去了需要请求游戏引擎js等文件的步骤。
+但在嵌入发生一些意外，游戏页面加载时会报**file://**协议跨域，从而加载游戏失败，在Cocos论坛找到了解决方案：
+在游戏项目的构建模板中修改fetch函数： (构建模板在游戏引擎编辑器左上角菜单栏-项目-创建项目构建模板（选择对应的构建平台）-web手机端即可创建)
+function fetchLocal(url) { return new Promise(function (resolve, reject) { var xhr = new XMLHttpRequest(); xhr.onload = function () { resolve( new Response(xhr.response, { status: 200 }) ); }; xhr.onerror = function () { reject(new TypeError(&#34;Local request failed&#34;)); }; xhr.open(&#34;GET&#34;, url); xhr.responseType = &#34;arraybuffer&#34;; xhr.send(null); }); } window.fetch = fetchLocal; 如果你的游戏需要使用到fetch来进行网络请求，你可以额外使用个属性来存储原来的fetch函数：
+// 在window.fetch被修改为fetchLocal之前赋值 window.fetchRemote = window.fetch; function fetchLocal(url) { ... } window.fetch = fetchLocal; 还有，如果你游戏还用到远程服务器上的图片作为背景啥的，那么此时也应该会导致报错的（还是因为跨域）" />
+  <meta
+    name="author"
+    content=""
+  />
+  
+
+  
+  
+  
+  
+  
+  
+  <link rel="preload stylesheet" as="style" href="https://arutoriacode.github.io/main.min.css" />
+
+  
+  <script
+    defer
+    src="https://arutoriacode.github.io/highlight.min.js"
+    onload="hljs.initHighlightingOnLoad();"
+  ></script>
+  
+
+  
+   
+  <link rel="preload" as="image" href="https://arutoriacode.github.io/theme.png" />
+
+  
+  
+  
+  <link rel="preload" as="image" href="https://avatars.githubusercontent.com/u/37136717" />
+  
+  
+
+  
+  <link rel="preload" as="image" href="https://arutoriacode.github.io/github.svg" />
+  
+
+  
+  <link rel="icon" href="https://arutoriacode.github.io/favicon.ico" />
+  <link rel="apple-touch-icon" href="https://arutoriacode.github.io/apple-touch-icon.png" />
+
+  
+  <meta name="generator" content="Hugo 0.110.0">
+
+  
+  
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <meta property="og:title" content="CocosCreator3.x打包后嵌入到uniapp" />
+<meta property="og:description" content="首先Cocos本身就支持跨平台，可以打包成APP，但由于项目中游戏只是APP的一部分，还有其他界面要开发，用游戏引擎来写APP的一些交互逻辑页面确实不太合适，所以在技术选型上又选择uniapp。
+uniapp的web-view是可以嵌入在线的地址和本地的html页面，但嵌入本地的html仅支持APP端，如果你开发需要兼容多端，那么直接使用在线地址的形式嵌入即可，下面的内容也不必阅读了。
+需求上因为只需要支持APP端即可，并且使用在线地址嵌入在等待游戏加载的时间有点久，所以我选用了将游戏打包成h5并以本地html页面嵌入到uniapp形式，省去了需要请求游戏引擎js等文件的步骤。
+但在嵌入发生一些意外，游戏页面加载时会报**file://**协议跨域，从而加载游戏失败，在Cocos论坛找到了解决方案：
+在游戏项目的构建模板中修改fetch函数： (构建模板在游戏引擎编辑器左上角菜单栏-项目-创建项目构建模板（选择对应的构建平台）-web手机端即可创建)
+function fetchLocal(url) { return new Promise(function (resolve, reject) { var xhr = new XMLHttpRequest(); xhr.onload = function () { resolve( new Response(xhr.response, { status: 200 }) ); }; xhr.onerror = function () { reject(new TypeError(&#34;Local request failed&#34;)); }; xhr.open(&#34;GET&#34;, url); xhr.responseType = &#34;arraybuffer&#34;; xhr.send(null); }); } window.fetch = fetchLocal; 如果你的游戏需要使用到fetch来进行网络请求，你可以额外使用个属性来存储原来的fetch函数：
+// 在window.fetch被修改为fetchLocal之前赋值 window.fetchRemote = window.fetch; function fetchLocal(url) { ... } window.fetch = fetchLocal; 还有，如果你游戏还用到远程服务器上的图片作为背景啥的，那么此时也应该会导致报错的（还是因为跨域）" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://arutoriacode.github.io/posts/cocoscreator3.x%E6%89%93%E5%8C%85%E5%90%8E%E5%B5%8C%E5%85%A5%E5%88%B0uniapp/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-09-10T22:45:15+08:00" />
+<meta property="article:modified_time" content="2023-09-10T22:45:15+08:00" />
+
+  
+  <meta itemprop="name" content="CocosCreator3.x打包后嵌入到uniapp">
+<meta itemprop="description" content="首先Cocos本身就支持跨平台，可以打包成APP，但由于项目中游戏只是APP的一部分，还有其他界面要开发，用游戏引擎来写APP的一些交互逻辑页面确实不太合适，所以在技术选型上又选择uniapp。
+uniapp的web-view是可以嵌入在线的地址和本地的html页面，但嵌入本地的html仅支持APP端，如果你开发需要兼容多端，那么直接使用在线地址的形式嵌入即可，下面的内容也不必阅读了。
+需求上因为只需要支持APP端即可，并且使用在线地址嵌入在等待游戏加载的时间有点久，所以我选用了将游戏打包成h5并以本地html页面嵌入到uniapp形式，省去了需要请求游戏引擎js等文件的步骤。
+但在嵌入发生一些意外，游戏页面加载时会报**file://**协议跨域，从而加载游戏失败，在Cocos论坛找到了解决方案：
+在游戏项目的构建模板中修改fetch函数： (构建模板在游戏引擎编辑器左上角菜单栏-项目-创建项目构建模板（选择对应的构建平台）-web手机端即可创建)
+function fetchLocal(url) { return new Promise(function (resolve, reject) { var xhr = new XMLHttpRequest(); xhr.onload = function () { resolve( new Response(xhr.response, { status: 200 }) ); }; xhr.onerror = function () { reject(new TypeError(&#34;Local request failed&#34;)); }; xhr.open(&#34;GET&#34;, url); xhr.responseType = &#34;arraybuffer&#34;; xhr.send(null); }); } window.fetch = fetchLocal; 如果你的游戏需要使用到fetch来进行网络请求，你可以额外使用个属性来存储原来的fetch函数：
+// 在window.fetch被修改为fetchLocal之前赋值 window.fetchRemote = window.fetch; function fetchLocal(url) { ... } window.fetch = fetchLocal; 还有，如果你游戏还用到远程服务器上的图片作为背景啥的，那么此时也应该会导致报错的（还是因为跨域）"><meta itemprop="datePublished" content="2023-09-10T22:45:15+08:00" />
+<meta itemprop="dateModified" content="2023-09-10T22:45:15+08:00" />
+<meta itemprop="wordCount" content="334">
+<meta itemprop="keywords" content="" />
+  
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="CocosCreator3.x打包后嵌入到uniapp"/>
+<meta name="twitter:description" content="首先Cocos本身就支持跨平台，可以打包成APP，但由于项目中游戏只是APP的一部分，还有其他界面要开发，用游戏引擎来写APP的一些交互逻辑页面确实不太合适，所以在技术选型上又选择uniapp。
+uniapp的web-view是可以嵌入在线的地址和本地的html页面，但嵌入本地的html仅支持APP端，如果你开发需要兼容多端，那么直接使用在线地址的形式嵌入即可，下面的内容也不必阅读了。
+需求上因为只需要支持APP端即可，并且使用在线地址嵌入在等待游戏加载的时间有点久，所以我选用了将游戏打包成h5并以本地html页面嵌入到uniapp形式，省去了需要请求游戏引擎js等文件的步骤。
+但在嵌入发生一些意外，游戏页面加载时会报**file://**协议跨域，从而加载游戏失败，在Cocos论坛找到了解决方案：
+在游戏项目的构建模板中修改fetch函数： (构建模板在游戏引擎编辑器左上角菜单栏-项目-创建项目构建模板（选择对应的构建平台）-web手机端即可创建)
+function fetchLocal(url) { return new Promise(function (resolve, reject) { var xhr = new XMLHttpRequest(); xhr.onload = function () { resolve( new Response(xhr.response, { status: 200 }) ); }; xhr.onerror = function () { reject(new TypeError(&#34;Local request failed&#34;)); }; xhr.open(&#34;GET&#34;, url); xhr.responseType = &#34;arraybuffer&#34;; xhr.send(null); }); } window.fetch = fetchLocal; 如果你的游戏需要使用到fetch来进行网络请求，你可以额外使用个属性来存储原来的fetch函数：
+// 在window.fetch被修改为fetchLocal之前赋值 window.fetchRemote = window.fetch; function fetchLocal(url) { ... } window.fetch = fetchLocal; 还有，如果你游戏还用到远程服务器上的图片作为背景啥的，那么此时也应该会导致报错的（还是因为跨域）"/>
+
+  
+  
+</head>
+
+  <body class="text-black duration-200 ease-out dark:text-white">
+    <header class="mx-auto flex h-[5rem] max-w-3xl px-8 lg:justify-center">
+  <div class="relative z-50 mr-auto flex items-center">
+    <a
+      class="-translate-x-[1px] -translate-y-0.5 text-3xl font-bold"
+      href="https://arutoriacode.github.io/"
+      >无限灰</a
+    >
+    <a
+      class="btn-dark ml-6 h-6 w-6 shrink-0 cursor-pointer [background:url(./theme.png)_left_center/_auto_theme('spacing.6')_no-repeat] [transition:_background-position_0.4s_steps(5)] dark:[background-position:right]"
+    ></a>
+  </div>
+
+  <a
+    class="btn-menu relative z-50 -mr-8 flex h-[5rem] w-[5rem] shrink-0 cursor-pointer flex-col items-center justify-center gap-2.5 lg:hidden"
+  ></a>
+
+  
+  <script>
+    
+    const htmlClass = document.documentElement.classList;
+    setTimeout(() => {
+      htmlClass.remove('not-ready');
+    }, 10);
+
+    
+    const btnMenu = document.querySelector('.btn-menu');
+    btnMenu.addEventListener('click', () => {
+      htmlClass.toggle('open');
+    });
+
+    
+    const metaTheme = document.querySelector('meta[name="theme-color"]');
+    const lightBg = `"#fbfbfb"`.replace(/"/g, '');
+    const setDark = (isDark) => {
+      metaTheme.setAttribute('content', isDark ? '#000' : lightBg);
+      htmlClass[isDark ? 'add' : 'remove']('dark');
+      localStorage.setItem('dark', isDark);
+    };
+
+    
+    const darkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+    if (htmlClass.contains('dark')) {
+      setDark(true);
+    } else {
+      const darkVal = localStorage.getItem('dark');
+      setDark(darkVal ? darkVal === 'true' : darkScheme.matches);
+    }
+
+    
+    darkScheme.addEventListener('change', (event) => {
+      setDark(event.matches);
+    });
+
+    
+    const btnDark = document.querySelector('.btn-dark');
+    btnDark.addEventListener('click', () => {
+      setDark(localStorage.getItem('dark') !== 'true');
+    });
+  </script>
+
+  <div
+    class="nav-wrapper fixed inset-x-0 top-full z-40 flex h-full select-none flex-col justify-center pb-16 duration-200 dark:bg-black lg:static lg:h-auto lg:flex-row lg:!bg-transparent lg:pb-0 lg:transition-none"
+  >
+    
+    
+    <nav class="lg:ml-12 lg:flex lg:flex-row lg:items-center lg:space-x-6">
+      
+      <a
+        class="block text-center text-2xl leading-[5rem] lg:text-base lg:font-normal"
+        href="/elysia"
+        >低代码设计器-elysia</a
+      >
+      
+    </nav>
+    
+
+    
+    <nav
+      class="mt-12 flex justify-center space-x-10 dark:invert lg:mt-0 lg:ml-12 lg:items-center lg:space-x-6"
+    >
+      
+      <a
+        class="h-8 w-8 [background:var(--url)_center_center/cover_no-repeat] lg:h-6 lg:w-6"
+        style="--url: url(./github.svg)"
+        href=" https://github.com/ArutoriaCode "
+        target="_blank"
+      ></a>
+      
+    </nav>
+    
+  </div>
+</header>
+
+
+    <main
+      class="prose prose-neutral relative mx-auto min-h-[calc(100%-10rem)] max-w-3xl px-8 pt-20 pb-32 dark:prose-invert"
+    >
+      
+
+<article>
+  <header class="mb-20">
+    <h1 class="!my-0 pb-2.5">CocosCreator3.x打包后嵌入到uniapp</h1>
+
+    
+    <div class="text-sm opacity-60">
+      
+      <time>Sep 10, 2023</time>
+      
+      
+    </div>
+    
+  </header>
+
+  <section><p>首先Cocos本身就支持跨平台，可以打包成APP，但由于项目中游戏只是APP的一部分，还有其他界面要开发，用游戏引擎来写APP的一些交互逻辑页面确实不太合适，所以在技术选型上又选择uniapp。</p>
+<p>uniapp的web-view是可以嵌入在线的地址和本地的html页面，但嵌入本地的html仅支持APP端，如果你开发需要兼容多端，那么直接使用在线地址的形式嵌入即可，下面的内容也不必阅读了。</p>
+<p>需求上因为只需要支持APP端即可，并且使用在线地址嵌入在等待游戏加载的时间有点久，所以我选用了将游戏打包成h5并以本地html页面嵌入到uniapp形式，省去了需要请求游戏引擎js等文件的步骤。</p>
+<p>但在嵌入发生一些意外，游戏页面加载时会报**file://**协议跨域，从而加载游戏失败，在Cocos论坛找到了解决方案：</p>
+<p>在游戏项目的构建模板中修改<strong>fetch</strong>函数：
+(构建模板在游戏引擎编辑器左上角菜单栏-项目-创建项目构建模板（选择对应的构建平台）-web手机端即可创建)</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">fetchLocal</span>(<span style="color:#a6e22e">url</span>) {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> Promise(<span style="color:#66d9ef">function</span> (<span style="color:#a6e22e">resolve</span>, <span style="color:#a6e22e">reject</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">xhr</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">XMLHttpRequest</span>();
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">xhr</span>.<span style="color:#a6e22e">onload</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span> () {
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">resolve</span>(
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Response</span>(<span style="color:#a6e22e">xhr</span>.<span style="color:#a6e22e">response</span>, {
+</span></span><span style="display:flex;"><span>          <span style="color:#a6e22e">status</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">200</span>
+</span></span><span style="display:flex;"><span>        })
+</span></span><span style="display:flex;"><span>      );
+</span></span><span style="display:flex;"><span>    };
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">xhr</span>.<span style="color:#a6e22e">onerror</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span> () {
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">reject</span>(<span style="color:#66d9ef">new</span> <span style="color:#a6e22e">TypeError</span>(<span style="color:#e6db74">&#34;Local request failed&#34;</span>));
+</span></span><span style="display:flex;"><span>    };
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">xhr</span>.<span style="color:#a6e22e">open</span>(<span style="color:#e6db74">&#34;GET&#34;</span>, <span style="color:#a6e22e">url</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">xhr</span>.<span style="color:#a6e22e">responseType</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;arraybuffer&#34;</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">xhr</span>.<span style="color:#a6e22e">send</span>(<span style="color:#66d9ef">null</span>);
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>window.<span style="color:#a6e22e">fetch</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">fetchLocal</span>;
+</span></span></code></pre></div><p>如果你的游戏需要使用到<strong>fetch</strong>来进行网络请求，你可以额外使用个属性来存储原来的<strong>fetch</strong>函数：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#75715e">// 在window.fetch被修改为fetchLocal之前赋值
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>window.<span style="color:#a6e22e">fetchRemote</span> <span style="color:#f92672">=</span> window.<span style="color:#a6e22e">fetch</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">fetchLocal</span>(<span style="color:#a6e22e">url</span>) {
+</span></span><span style="display:flex;"><span>  ...
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>window.<span style="color:#a6e22e">fetch</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">fetchLocal</span>;
+</span></span></code></pre></div><p>还有，如果你游戏还用到远程服务器上的图片作为背景啥的，那么此时也应该会导致报错的（还是因为跨域）</p>
+<p>你还需要在修改<strong>Image</strong>对象：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">OldImage</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">Image</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">oldProto</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">Image</span>.<span style="color:#a6e22e">prototype</span>;
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">Image</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span> (<span style="color:#a6e22e">width</span>, <span style="color:#a6e22e">height</span>) {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">image</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">OldImage</span>(<span style="color:#a6e22e">width</span>, <span style="color:#a6e22e">height</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">image</span>.<span style="color:#a6e22e">crossOrigin</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;anonymous&#34;</span>;
+</span></span><span style="display:flex;"><span>  Object.<span style="color:#a6e22e">defineProperty</span>(<span style="color:#a6e22e">image</span>, <span style="color:#e6db74">&#34;crossOrigin&#34;</span>, {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">set</span>() {
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">true</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">image</span>;
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">Image</span>.<span style="color:#a6e22e">prototype</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">oldProto</span>;
+</span></span></code></pre></div><p>完整的构建模板代码如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span><span style="color:#75715e">&lt;!DOCTYPE html&gt;</span>
+</span></span><span style="display:flex;"><span>&lt;<span style="color:#f92672">html</span>&gt;
+</span></span><span style="display:flex;"><span>  &lt;<span style="color:#f92672">head</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">meta</span> <span style="color:#a6e22e">charset</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;utf-8&#34;</span> /&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">title</span>&gt;<span style="color:#960050;background-color:#1e0010">&lt;</span>%= projectName %&gt;&lt;/<span style="color:#f92672">title</span>&gt;
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">&lt;!--http://www.html5rocks.com/en/mobile/mobifying/--&gt;</span>
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">meta</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">name</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;viewport&#34;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">content</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;width=device-width,user-scalable=no,initial-scale=1,minimum-scale=1,maximum-scale=1,minimal-ui=true&#34;</span>
+</span></span><span style="display:flex;"><span>    /&gt;
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">&lt;!--https://developer.apple.com/library/safari/documentation/AppleApplications/Reference/SafariHTMLRef/Articles/MetaTags.html--&gt;</span>
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">meta</span> <span style="color:#a6e22e">name</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;apple-mobile-web-app-capable&#34;</span> <span style="color:#a6e22e">content</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;yes&#34;</span> /&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">meta</span> <span style="color:#a6e22e">name</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;apple-mobile-web-app-status-bar-style&#34;</span> <span style="color:#a6e22e">content</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;black-translucent&#34;</span> /&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">meta</span> <span style="color:#a6e22e">name</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;format-detection&#34;</span> <span style="color:#a6e22e">content</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;telephone=no&#34;</span> /&gt;
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">&lt;!-- force webkit on 360 --&gt;</span>
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">meta</span> <span style="color:#a6e22e">name</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;renderer&#34;</span> <span style="color:#a6e22e">content</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;webkit&#34;</span> /&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">meta</span> <span style="color:#a6e22e">name</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;force-rendering&#34;</span> <span style="color:#a6e22e">content</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;webkit&#34;</span> /&gt;
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">&lt;!-- force edge on IE --&gt;</span>
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">meta</span> <span style="color:#a6e22e">http-equiv</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;X-UA-Compatible&#34;</span> <span style="color:#a6e22e">content</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;IE=edge,chrome=1&#34;</span> /&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">meta</span> <span style="color:#a6e22e">name</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;msapplication-tap-highlight&#34;</span> <span style="color:#a6e22e">content</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;no&#34;</span> /&gt;
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">&lt;!-- force full screen on some browser --&gt;</span>
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">meta</span> <span style="color:#a6e22e">name</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;full-screen&#34;</span> <span style="color:#a6e22e">content</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;yes&#34;</span> /&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">meta</span> <span style="color:#a6e22e">name</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;x5-fullscreen&#34;</span> <span style="color:#a6e22e">content</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;true&#34;</span> /&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">meta</span> <span style="color:#a6e22e">name</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;360-fullscreen&#34;</span> <span style="color:#a6e22e">content</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;true&#34;</span> /&gt;
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">&lt;!--fix fireball/issues/3568 --&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">&lt;!--&lt;meta name=&#34;browsermode&#34; content=&#34;application&#34;&gt;--&gt;</span>
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">meta</span> <span style="color:#a6e22e">name</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;x5-page-mode&#34;</span> <span style="color:#a6e22e">content</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;app&#34;</span> /&gt;
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">&lt;!--&lt;link rel=&#34;apple-touch-icon&#34; href=&#34;.png&#34; /&gt;--&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">&lt;!--&lt;link rel=&#34;apple-touch-icon-precomposed&#34; href=&#34;.png&#34; /&gt;--&gt;</span>
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">link</span> <span style="color:#a6e22e">rel</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;stylesheet&#34;</span> <span style="color:#a6e22e">type</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;text/css&#34;</span> <span style="color:#a6e22e">href</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;&lt;%= cssUrl %&gt;&#34;</span> /&gt;
+</span></span><span style="display:flex;"><span>  &lt;/<span style="color:#f92672">head</span>&gt;
+</span></span><span style="display:flex;"><span>  &lt;<span style="color:#f92672">body</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">div</span> <span style="color:#a6e22e">id</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;GameDiv&#34;</span> <span style="color:#a6e22e">cc_exact_fit_screen</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;true&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>      &lt;<span style="color:#f92672">div</span> <span style="color:#a6e22e">id</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Cocos3dGameContainer&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>        &lt;<span style="color:#f92672">canvas</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#a6e22e">id</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;GameCanvas&#34;</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#a6e22e">oncontextmenu</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;event.preventDefault()&#34;</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#a6e22e">tabindex</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;99&#34;</span>
+</span></span><span style="display:flex;"><span>        &gt;&lt;/<span style="color:#f92672">canvas</span>&gt;
+</span></span><span style="display:flex;"><span>      &lt;/<span style="color:#f92672">div</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;/<span style="color:#f92672">div</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">script</span>&gt;
+</span></span><span style="display:flex;"><span>      window.<span style="color:#a6e22e">fetchRemote</span> <span style="color:#f92672">=</span> window.<span style="color:#a6e22e">fetch</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">OldImage</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">Image</span>;
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">oldProto</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">Image</span>.<span style="color:#a6e22e">prototype</span>;
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">Image</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span> (<span style="color:#a6e22e">width</span>, <span style="color:#a6e22e">height</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">image</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">OldImage</span>(<span style="color:#a6e22e">width</span>, <span style="color:#a6e22e">height</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">image</span>.<span style="color:#a6e22e">crossOrigin</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;anonymous&#34;</span>;
+</span></span><span style="display:flex;"><span>        Object.<span style="color:#a6e22e">defineProperty</span>(<span style="color:#a6e22e">image</span>, <span style="color:#e6db74">&#34;crossOrigin&#34;</span>, {
+</span></span><span style="display:flex;"><span>          <span style="color:#a6e22e">set</span>() {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">true</span>;
+</span></span><span style="display:flex;"><span>          }
+</span></span><span style="display:flex;"><span>        });
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">image</span>;
+</span></span><span style="display:flex;"><span>      };
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">Image</span>.<span style="color:#a6e22e">prototype</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">oldProto</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">fetchLocal</span>(<span style="color:#a6e22e">url</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> Promise(<span style="color:#66d9ef">function</span> (<span style="color:#a6e22e">resolve</span>, <span style="color:#a6e22e">reject</span>) {
+</span></span><span style="display:flex;"><span>          <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">xhr</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">XMLHttpRequest</span>();
+</span></span><span style="display:flex;"><span>          <span style="color:#a6e22e">xhr</span>.<span style="color:#a6e22e">onload</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span> () {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">resolve</span>(
+</span></span><span style="display:flex;"><span>              <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Response</span>(<span style="color:#a6e22e">xhr</span>.<span style="color:#a6e22e">response</span>, {
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">status</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">200</span>
+</span></span><span style="display:flex;"><span>              })
+</span></span><span style="display:flex;"><span>            );
+</span></span><span style="display:flex;"><span>          };
+</span></span><span style="display:flex;"><span>          <span style="color:#a6e22e">xhr</span>.<span style="color:#a6e22e">onerror</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span> () {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">reject</span>(<span style="color:#66d9ef">new</span> <span style="color:#a6e22e">TypeError</span>(<span style="color:#e6db74">&#34;Local request failed&#34;</span>));
+</span></span><span style="display:flex;"><span>          };
+</span></span><span style="display:flex;"><span>          <span style="color:#a6e22e">xhr</span>.<span style="color:#a6e22e">open</span>(<span style="color:#e6db74">&#34;GET&#34;</span>, <span style="color:#a6e22e">url</span>);
+</span></span><span style="display:flex;"><span>          <span style="color:#a6e22e">xhr</span>.<span style="color:#a6e22e">responseType</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;arraybuffer&#34;</span>;
+</span></span><span style="display:flex;"><span>          <span style="color:#a6e22e">xhr</span>.<span style="color:#a6e22e">send</span>(<span style="color:#66d9ef">null</span>);
+</span></span><span style="display:flex;"><span>        });
+</span></span><span style="display:flex;"><span>      }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      window.<span style="color:#a6e22e">fetch</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">fetchLocal</span>;
+</span></span><span style="display:flex;"><span>    &lt;/<span style="color:#f92672">script</span>&gt;
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">&lt;!-- 注意上面的脚本排在 include(cocosTemplate, {}) 前面 --&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#960050;background-color:#1e0010">&lt;</span>%- include(cocosTemplate, {}) %&gt;
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">&lt;!-- 用于和uniapp通信 --&gt;</span>
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">script</span> <span style="color:#a6e22e">src</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;src/uni.webview.1.5.4.js&#34;</span>&gt;&lt;/<span style="color:#f92672">script</span>&gt;
+</span></span><span style="display:flex;"><span>  &lt;/<span style="color:#f92672">body</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#f92672">html</span>&gt;
+</span></span></code></pre></div></section>
+
+  
+  
+
+  
+  
+  
+  <nav class="mt-24 flex rounded-lg bg-black/[3%] text-lg dark:bg-white/[8%]">
+    
+    
+    <a
+      class="ml-auto flex w-1/2 items-center justify-end rounded-r-md p-6 pl-3 no-underline hover:bg-black/[2%]"
+      href="https://arutoriacode.github.io/posts/cocoscreator%E6%B8%B8%E6%88%8F%E5%BC%95%E6%93%8E%E9%97%AE%E9%A2%98%E5%BD%92%E9%9B%86/"
+      ><span>CocosCreator游戏引擎问题归集</span><span class="ml-1.5">→</span></a
+    >
+    
+  </nav>
+  
+
+  
+  
+
+  
+  
+</article>
+
+
+    </main>
+
+    <footer
+  class="opaco mx-auto flex h-[5rem] max-w-3xl items-center px-8 text-[0.9em] opacity-60"
+>
+  <div class="mr-auto">
+    &copy; 2023
+    <a class="link" href="https://arutoriacode.github.io/">无限灰</a>
+  </div>
+  <a class="link mx-6" href="https://gohugo.io/" rel="noopener" target="_blank"
+    >Powered by Hugo️️</a
+  >️
+  <a
+    class="link"
+    href="https://github.com/nanxiaobei/hugo-paper"
+    rel="noopener"
+    target="_blank"
+    >▷ Paper 6</a
+  >
+</footer>
+
+  </body>
+</html>
